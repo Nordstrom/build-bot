@@ -56,10 +56,11 @@ var Github = {
 
         return rp(params)
             .then(function(data){
+                console.log("DATA")
                 console.log(data);
-
             })
             .catch(function(err){
+                console.log("ERR")
                 console.log(err.message);
                 console.log(err.response.headers);
             })
@@ -70,6 +71,3 @@ module.exports = Github;
 
 //Github.authorizeAsync()
 Github.mergeAsync("test-bot-branch", "master", "First merge of bot branches")
-    .catch(function(err){
-        console.log(err.message);
-    });
