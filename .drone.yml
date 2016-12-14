@@ -4,6 +4,7 @@ build:
     commands:
       - npm test
   bundle:
+    image: node:6
     commands:
       - echo "hello drone"
       - npm install -g gulp
