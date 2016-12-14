@@ -4,6 +4,6 @@ build:
     commands:
       - npm run commit
     when:
-      branch:
+      branches:
         - master
-        - test-*
+        - test-bot-branch
