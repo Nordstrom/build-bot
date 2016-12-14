@@ -1,3 +1,6 @@
+test:
+  commands:
+   - npm test
 build:
  image: node:6
  commands:
