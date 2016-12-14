@@ -6,4 +6,4 @@ build:
     when:
       branches:
         - master
-        - test-*
+        - test-bot-branch
