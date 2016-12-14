@@ -69,7 +69,7 @@ var Github = {
 module.exports = Github;
 
 //Github.authorizeAsync()
-Github.mergeAsync("test-bot-branch", "bot-branch", "First merge of bot branches")
+Github.mergeAsync("test-bot-branch", "master", "First merge of bot branches")
     .catch(function(err){
         console.log(err.message);
     });
