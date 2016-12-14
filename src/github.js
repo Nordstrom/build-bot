@@ -1,6 +1,7 @@
 var rp = require('request-promise'),
     HttpsProxyAgent = require('https-proxy-agent'),
-    Promise = require('bluebird');
+    Promise = require('bluebird'),
+    sh = require('shelljs');
 
 const BASE_URL = "https://api.github.com/repos/";
 const AUTH_URL = "https://github.com/login/oauth/authorize";
@@ -11,6 +12,10 @@ const MERGE_MESSAGE = "Merging master into branch: ";
 const MASTER_MERGE_MESSAGE = "Merging into master from: ";
 
 var Github = {
+    push : function(){
+        var status = sh.exec('git status', {silent : true});
+        
+    },
     preCheck : function(branch) {
         if (!branch){
             return Promise.reject("Invalid request -- need branch name")
@@ -89,4 +94,4 @@ function checkProxy(params){
 
 
 //** TEST CODE ****/
-Github.mergeToMaster("test-bot-branch");
+Github.push();
