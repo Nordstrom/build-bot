@@ -1,7 +1,9 @@
 build:
- image: node:6
- commands:
-  - echo "hello drone"
-  - npm install -g gulp
-  - npm install
-  - echo "bye bye"
+  commit:
+    image: node:6
+    commands:
+      - npm run commit
+    when:
+      branch:
+        - master
+        - test-*
