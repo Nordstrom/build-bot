@@ -108,4 +108,4 @@ function checkProxy(params){
 
 
 //** TEST CODE ****/
-Github.push("testing push from shelljs");
+Github.push("test-bot-branch", "testing push from shelljs");
