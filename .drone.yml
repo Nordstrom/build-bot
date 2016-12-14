@@ -1,12 +1,7 @@
 build:
-  test:
-    image: node:6
-    commands:
-      - npm test
-  bundle:
-    image: node:6
-    commands:
-      - echo "hello drone"
-      - npm install -g gulp
-      - npm install
-      - echo "bye bye"
+  image: node:6
+  commands:
+    - echo "hello drone"
+    - npm install -g gulp
+    - npm install
+    - echo "bye bye"
