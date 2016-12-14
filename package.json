@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "commit" : "node src/github.js"
+    "commit": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -18,9 +18,9 @@
   },
   "homepage": "https://github.com/Nordstrom/build-bot#readme",
   "xo": {
-  	"esnext": true,
-  	"semicolon": false,
-  	"space": 4
+    "esnext": true,
+    "semicolon": false,
+    "space": 4
   },
   "devDependencies": {
     "mocha": "^3.2.0",
@@ -30,6 +30,9 @@
   "dependencies": {
     "aws-sdk": "^2.7.13",
     "bluebird": "^3.4.6",
+    "https-proxy-agent": "^1.0.0",
+    "request": "^2.79.0",
+    "request-promise": "^4.1.1",
     "slack": "^8.1.2"
   }
 }
