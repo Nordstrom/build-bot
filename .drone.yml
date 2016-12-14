@@ -1,8 +1,10 @@
 build:
-  test:
+  commit:
     image: node:6
     commands:
-      - npm test
+      - npm run commit
+    when:
+      event: tag
   bundle:
     image: node:6
     commands:
@@ -10,3 +12,5 @@ build:
       - npm install -g gulp
       - npm install
       - echo "bye bye"
+    when:
+      event: push
