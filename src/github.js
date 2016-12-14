@@ -12,7 +12,10 @@ const MERGE_MESSAGE = "Merging master into branch: ";
 const MASTER_MERGE_MESSAGE = "Merging into master from: ";
 
 var Github = {
-    push : function(message){
+    push : function(branch, message){
+        if (!branch){
+            return Promise.reject("No branch name on push");
+        }
         var code = sh.exec('git add .');
         if (code == 1){
             return Promise.reject("Error on git add");
@@ -21,7 +24,11 @@ var Github = {
         if (code == 1){
             return Promise.reject("Error on git commit");
         }
-
+        code = sh.exec('git push origin ' + branch);
+        if (code == 1){
+            return Promise.reject("Error on git push");
+        }
+        return Promise.resolve();
     },
     preCheck : function(branch) {
         if (!branch){
