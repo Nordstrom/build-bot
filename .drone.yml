@@ -4,12 +4,4 @@ build:
     commands:
       - npm run commit
     when:
-      event: tag
-  bundle:
-    image: node:6
-    commands:
-      - echo "hello drone"
-      - npm install -g gulp
-      - echo "bye bye"
-    when:
-      event: push
+      : tag
