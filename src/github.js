@@ -13,7 +13,14 @@ const MASTER_MERGE_MESSAGE = "Merging into master from: ";
 
 var Github = {
     push : function(){
-        var status = sh.exec('git status', {silent : true});
+        var code = sh.exec('git add .', {silent : true});
+        if (code == 1){
+            return Promise.reject("Error on git add");
+        }
+        code = sh.exec('git commit -m "auto push from bot"');
+        if (code == 1){
+            return Promise.reject("Error on git commit");
+        }
         
     },
     preCheck : function(branch) {
