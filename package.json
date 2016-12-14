@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "commit": "node src/github.js"
+    "commit": "node index.js"
   },
   "repository": {
     "type": "git",
