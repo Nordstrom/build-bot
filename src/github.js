@@ -7,3 +7,4 @@ var Github = {
 module.exports = Github;
 
 console.log(Github.commit());
+console.log("done");
