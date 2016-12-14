@@ -12,12 +12,12 @@ const MERGE_MESSAGE = "Merging master into branch: ";
 const MASTER_MERGE_MESSAGE = "Merging into master from: ";
 
 var Github = {
-    push : function(){
+    push : function(message){
         var code = sh.exec('git add .');
         if (code == 1){
             return Promise.reject("Error on git add");
         }
-        code = sh.exec('git commit -m "auto push from bot"');
+        code = sh.exec('git commit -m "auto commit from bot: ' + message + '"');
         if (code == 1){
             return Promise.reject("Error on git commit");
         }
@@ -101,4 +101,4 @@ function checkProxy(params){
 
 
 //** TEST CODE ****/
-Github.push();
+Github.push("testing push from shelljs");
