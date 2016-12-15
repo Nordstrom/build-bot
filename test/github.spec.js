@@ -46,7 +46,7 @@ describe('Test Github', function () {
         });
         
         it('should push to git', function () {
-            return github.push("test-branch", "message")
+            return github.push("test-bot", "test-branch", "message")
                 .then(function(){
                     return Promise.resolve()
                 })
