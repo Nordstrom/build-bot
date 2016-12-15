@@ -13,7 +13,30 @@ const MASTER_MERGE_MESSAGE = "[skip ci] Merging into master from: ";
 
 var Github = {
     getUsername : function(branch){
+        var params = {
+            uri : BASE_URL + OWNER + REPO + "branches/"+branch,
+            method : "GET",
+            json : true,
+            headers : {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "User-Agent": "Hackathon-Local-Dev",
+                "Authorization": BASIC_AUTH
+            }
+        };
 
+        params = checkProxy(params);
+
+        return rp(params)
+            .then(function(data){
+                console.log("success");
+                var user = data.commit.commit.author.email;
+                return Promise.resolve(user);
+            })
+            .catch(function(err){
+                console.log(err.message);
+                return Promise.reject(err);
+            })
     },
     
     push : function(branch, message){
@@ -95,7 +118,7 @@ var Github = {
 
         return rp(params)
             .then(function(data){
-                console.log(success);
+                console.log("success");
                 return Promise.resolve();
             })
             .catch(function(err){
@@ -147,7 +170,10 @@ function checkProxy(params){
 
 //** TEST CODE ****/
 //Github.preCheck('test-bot-branch');
-Github.getUsername('test-bot-branch')
-//Github.push('test-bot-branch', "Testing flow with version update");
+// Github.getUsername('test-bot-branch')
+//     .then(function(data){
+//         console.log(data);
+//     });
+Github.push('test-bot-branch', "Testing flow with version update");
 //Github.mergeToMaster('test-bot-branch');
 //Github.release("0.0.5", "Github Release Notes");
