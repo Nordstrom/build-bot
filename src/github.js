@@ -263,20 +263,3 @@ function checkProxy(params){
     }
     return params;
 }
-
-
-
-
-//** TEST CODE ****/
-//Github.commitAndRelease("build-bot", "test-bot-branch", "0.0.11", "These release notes rule!");
-// Github.request("build-bot", "test-bot-branch", "0.0.10");
-
-// createReference("build-bot", "20ee116227ec18666dc823ede06a3d3710fb05d3", "v0.0.8");
-//Github.preCheck('test-bot-branch');
-// Github.getUsername('test-bot-branch')
-//     .then(function(data){
-//         console.log(data);
-//     });
-//Github.push('test-bot-branch', "Testing flow with version update");
-//Github.mergeToMaster('test-bot-branch');
-//Github.release("0.0.5", "Github Release Notes");
