@@ -6,23 +6,27 @@ var rp = require('request-promise'),
 const BASE_URL = "https://api.github.com/repos/";
 const AUTH_URL = "https://github.com/login/oauth/authorize";
 const OWNER = "Nordstrom/";
-const REPO = "build-bot/";
 const BASIC_AUTH = "Basic amFzb25vbG1zdGVhZDMzOkJAc2ViYWxsMzM=";
 const MERGE_MESSAGE = "Merging master into branch: ";
+const TAG_MESSAGE = "Tagging branch for deploy. Tag: ";
 const MASTER_MERGE_MESSAGE = "[skip ci] Merging into master from: ";
+const HEADERS = {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+    "User-Agent": "Hackathon-Local-Dev",
+    "Authorization": BASIC_AUTH
+};
 
 var Github = {
-    getUsername : function(branch){
+    getUsername : function(repo, branch){
+        if (!repo || !branch){
+            return Promise.reject("Invalid request, cant merge")
+        }
         var params = {
-            uri : BASE_URL + OWNER + REPO + "branches/"+branch,
+            uri : BASE_URL + OWNER + repo + "branches/"+branch,
             method : "GET",
             json : true,
-            headers : {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "User-Agent": "Hackathon-Local-Dev",
-                "Authorization": BASIC_AUTH
-            }
+            headers : HEADERS
         };
 
         params = checkProxy(params);
@@ -38,9 +42,11 @@ var Github = {
                 return Promise.reject(err);
             })
     },
+
+
     
-    push : function(branch, message){
-        if (!branch || !message){
+    push : function(repo, branch, message){
+        if (!branch || !message || !repo){
             return Promise.reject("Invalid Arguments");
         }
         var result = sh.exec('git add .');
@@ -57,32 +63,16 @@ var Github = {
         }
         return Promise.resolve();
     },
-    preCheck : function(branch) {
-        if (!branch){
-            return Promise.reject("Invalid request -- need branch name")
+
+    mergeToMaster : function(repo, branch) {
+        if (!repo || !branch) {
+            return Promise.reject("Invalid request")
         }
 
-        return merge(branch, "master", MERGE_MESSAGE + branch)
-            .then(function(){
+        return merge(repo, "master", branch, MASTER_MERGE_MESSAGE + branch)
+            .then(function (data) {
                 console.log("Success...");
-            })
-            .catch(function(err){
-                if (err.message.message.indexOf("409") > -1){
-                    return Promise.reject("Conflict merging master into " + branch);
-                } else {
-                    return Promise.reject(err.message);
-                }
-            })
-    },
-
-    mergeToMaster : function(branch) {
-        if (!branch) {
-            return Promise.reject("Invalid request -- need branch name")
-        }
-
-        return merge("master", branch, MASTER_MERGE_MESSAGE + branch)
-            .then(function () {
-                console.log("Success...");
+                console.log(data);
             })
             .catch(function (err) {
                 if (err.message.message.indexOf("409")) {
@@ -93,17 +83,67 @@ var Github = {
             })
     },
 
-    release : function(version, notes){
+    preCheck : function(repo, branch) {
+        if (!branch || !repo){
+            return Promise.reject("Invalid request")
+        }
+
+        return merge(repo, branch, "master", MERGE_MESSAGE + branch)
+            .then(function(data){
+                console.log("Success...");
+                console.log(data);
+                return Promise.resolve();
+            })
+            .catch(function(err){
+                if (err.message.message.indexOf("409") > -1){
+                    return Promise.reject("Conflict merging master into " + branch);
+                } else {
+                    return Promise.reject(err.message);
+                }
+            })
+    },
+
+    request : function(repo, branch, version){
+        if (!repo || !branch || !version){
+            return Promise.reject("Invalid request")
+        }
+
+        this.preCheck(repo, branch)
+            .then(function(data){
+                if (!!data){
+                    var sha = data.sha;
+                    return tag(repo, sha, version);
+                } else {
+                    return getBranchInfo(repo, branch)
+                        .then(function(data){
+                            var sha = data.commit.sha;
+                            return tag(repo, sha, version);
+                        })
+                }
+            })
+            .then(function(data){
+                console.log(data);
+                return createReference(repo, data.sha, data.tag);
+            })
+            .then(function(data){
+                console.log(data)
+            })
+            .catch(function(err){
+                console.log(err.message);
+            })
+
+    },
+
+    release : function(repo, version, notes){
+        if (!repo || !version || !notes){
+            return Promise.reject("Invalid request, cant merge")
+        }
+
         var params = {
-            uri : BASE_URL + OWNER + REPO + "releases",
+            uri : BASE_URL + OWNER + repo + "/releases",
             method : "POST",
             json : true,
-            headers : {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "User-Agent" : "Hackathon-Local-Dev",
-                "Authorization" : BASIC_AUTH
-            },
+            headers : HEADERS,
             body : {
                 "tag_name": "v" + version,
                 "target_commitish": "master",
@@ -130,22 +170,82 @@ var Github = {
 
 module.exports = Github;
 
+function tag(repo, sha, version){
+    if (!repo || !sha || !version){
+        return Promise.reject("Invalid request")
+    }
 
-function merge(base, head, message){
-    if (!base || !head || !message){
+    var params = {
+        uri : BASE_URL + OWNER + repo + "/git/tags",
+        method : "POST",
+        json : true,
+        headers : HEADERS,
+        body : {
+            "tag": "v"+version,
+            "message": TAG_MESSAGE+version,
+            "object": sha,
+            "type" : "commit",
+            "tagger" : {
+                "name": "johnny5",
+                "email": "johnny5@nordstrom.com",
+                "date": new Date()
+            }
+        }
+    };
+
+    params = checkProxy(params);
+
+    return rp(params);
+}
+
+function getBranchInfo(repo, branch){
+    if (!repo || !branch){
+        return Promise.reject("Invalid request")
+    }
+
+    var params = {
+        uri : BASE_URL + OWNER + repo + "/branches/" + branch,
+        method : "GET",
+        json : true,
+        headers : HEADERS
+    };
+
+    params = checkProxy(params);
+
+    return rp(params);
+}
+
+function createReference(repo, sha, tag){
+    if (!repo || !tag){
         return Promise.reject("Invalid request, cant merge")
     }
 
     var params = {
-        uri : BASE_URL + OWNER + REPO + "merges",
+        uri : BASE_URL + OWNER + repo + "/git/refs",
         method : "POST",
         json : true,
-        headers : {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-            "User-Agent" : "Hackathon-Local-Dev",
-            "Authorization" : BASIC_AUTH
-        },
+        headers : HEADERS,
+        body : {
+            "ref": 'refs/tags/'+tag,
+            "sha": sha
+        }
+    };
+
+    params = checkProxy(params);
+
+    return rp(params);
+}
+
+function merge(repo, base, head, message){
+    if (!repo || !base || !head || !message){
+        return Promise.reject("Invalid request, cant merge")
+    }
+
+    var params = {
+        uri : BASE_URL + OWNER + repo + "/merges",
+        method : "POST",
+        json : true,
+        headers : HEADERS,
         body : {
             "base": base,
             "head": head,
@@ -169,6 +269,9 @@ function checkProxy(params){
 
 
 //** TEST CODE ****/
+
+Github.request("build-bot", "test-bot-branch", "0.0.7");
+// createReference("build-bot", "20ee116227ec18666dc823ede06a3d3710fb05d3", "v0.0.8");
 //Github.preCheck('test-bot-branch');
 // Github.getUsername('test-bot-branch')
 //     .then(function(data){
