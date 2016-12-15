@@ -30,8 +30,8 @@ function requestDeploy(build) {
             if (data && data.items && data.items.length === 0) {
                 return State.create({
                     repo: build.repo,
-                    branch: build.branch,
                     version: build.version,
+                    branch: build.branch,
                     state: 'requested'
                 });
             }
@@ -39,17 +39,10 @@ function requestDeploy(build) {
         });
 }
 
-function startDeploy(build) {
+function startDeploy() {
     return State.getBranchesInStates(stateMap.startable)
         .then(function (data) {
             if (data && data.items && data.items.length > 0) {
-
-                if (!_.isEqual(
-                        _.pick(build, ['repo', 'branch', 'version']),
-                        _.pick(data.items[0], ['repo', 'branch', 'version'])
-                    )) {
-                    throw new Error('build has not been requested for the same branch or version');
-                }
                 return State.update({
                     repo: data.items[0].repo,
                     version: data.items[0].version,
@@ -96,6 +89,7 @@ function failDeploy() {
             if (data && data.items && data.items.length > 0) {
                 return State.update({
                     repo: data.items[0].repo,
+                    version: data.items[0].version,
                     state: 'failed'
                 });
             }
