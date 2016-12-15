@@ -3,7 +3,6 @@ build:
     image: node:6
     commands:
       - mkdir -p ~/dynamodb_local
-      - npm config set loglevel warn
-      - npm install
+      - npm install --silent
       - npm test
       - echo "hello world"
