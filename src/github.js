@@ -91,11 +91,7 @@ function mergeToMaster(repo, branch) {
             return Promise.resolve();
         })
         .catch(function (err) {
-            if (err.message.message.indexOf("409")) {
-                return Promise.reject("Conflict merging " + branch + "into master");
-            } else {
-                return Promise.reject(err.message);
-            }
+            return Promise.reject(err.message);
         })
 }
 
@@ -143,11 +139,7 @@ function preCheck(repo, branch) {
             return Promise.resolve();
         })
         .catch(function(err){
-            if (err.message.message.indexOf("409") > -1){
-                return Promise.reject("Conflict merging master into " + branch);
-            } else {
-                return Promise.reject(err.message);
-            }
+            return Promise.reject(err.message);
         })
 }
 
