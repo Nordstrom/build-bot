@@ -40,8 +40,8 @@ var Github = {
     },
     
     push : function(branch, message){
-        if (!branch){
-            return Promise.reject("No branch name on push");
+        if (!branch || !message){
+            return Promise.reject("Invalid Arguments");
         }
         var result = sh.exec('git add .');
         if (result.code == 1){
@@ -67,7 +67,7 @@ var Github = {
                 console.log("Success...");
             })
             .catch(function(err){
-                if (err.message.message.indexOf("409")){
+                if (err.message.message.indexOf("409") > -1){
                     return Promise.reject("Conflict merging master into " + branch);
                 } else {
                     return Promise.reject(err.message);
@@ -174,6 +174,6 @@ function checkProxy(params){
 //     .then(function(data){
 //         console.log(data);
 //     });
-Github.push('test-bot-branch', "Testing flow with version update");
+//Github.push('test-bot-branch', "Testing flow with version update");
 //Github.mergeToMaster('test-bot-branch');
 //Github.release("0.0.5", "Github Release Notes");

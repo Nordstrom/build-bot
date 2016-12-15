@@ -1,8 +1,7 @@
 build:
   commit:
-    image: fengzhou/java-node:java8-node4
+    image: node:6
     commands:
       - mkdir -p ~/dynamodb_local
-      - npm install
+      - npm install --silent
       - npm test
-      - npm run commit
