@@ -1,6 +1,6 @@
 build:
   commit:
-    image: jasonolmstead33/node-dynamolocal
+    image: node:6
     commands:
       - mkdir -p ~/dynamodb_local
       - npm install --silent
