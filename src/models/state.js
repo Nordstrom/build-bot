@@ -42,6 +42,7 @@ function create(build) {
 function update(build) {
     return table.updateAsync({
         repo: build.repo,
+        version: build.version,
         state: build.state,
         updated: Date.now()
     })

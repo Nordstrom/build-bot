@@ -11,19 +11,27 @@ module.exports = {
                     {
                         AttributeName: 'repo',
                         AttributeType: 'S'
+                    },
+                    {
+                        AttributeName: 'version',
+                        AttributeType: 'S'
                     }
                 ],
                 KeySchema: [
                     {
                         AttributeName: 'repo',
                         KeyType: 'HASH'
+                    },
+                    {
+                        AttributeName: 'version',
+                        KeyType: 'RANGE'
                     }
                 ],
                 ProvisionedThroughput: {
                     ReadCapacityUnits: 1,
                     WriteCapacityUnits: 1
                 },
-                TableName: 'Hackathan-Build-Bot-State'
+                TableName: 'build-bot-state'
             }
         }
     }
