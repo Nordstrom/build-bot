@@ -23,8 +23,8 @@ function getDeployedVersion (build) {
         })
 }
 
-function requestDeploy (build) {
-  return State.getBranchesInStates(stateMap.requestable)
+function requestDeploy(build) {
+    return State.getBranchesInStates(build.repo, stateMap.requestable)
         .then(function (data) {
             if (data && data.items && data.items.length === 0) {
                 return State.create({
@@ -38,8 +38,8 @@ function requestDeploy (build) {
         });
 }
 
-function startDeploy() {
-    return State.getBranchesInStates(stateMap.startable)
+function startDeploy(build) {
+    return State.getBranchesInStates(build.repo, stateMap.startable)
         .then(function (data) {
             if (data && data.items && data.items.length > 0) {
                 return State.update({
@@ -58,8 +58,8 @@ function startDeploy() {
         })
 }
 
-function finishDeploy () {
-  return State.getBranchesInStates(stateMap.finishable)
+function finishDeploy(build) {
+    return State.getBranchesInStates(build.repo, stateMap.finishable)
         .then(function (data) {
           if (data && data.items && data.items.length > 0) {
             console.log('finish item', data.items[0])
@@ -72,9 +72,9 @@ function finishDeploy () {
           throw new Error('There is no started build yet')
         })
 }
-function commitOrRollBack (state) {
-  return function () {
-    return State.getBranchesInStates(stateMap.committable)
+function commitOrRollBack(state) {
+    return function (build) {
+        return State.getBranchesInStates(build.repo, stateMap.committable)
             .then(function (data) {
               if (data && data.items && data.items.length > 0) {
                 return State.update({
@@ -88,8 +88,8 @@ function commitOrRollBack (state) {
   }
 }
 
-function failDeploy () {
-  return State.getBranchesInStates(stateMap.failable)
+function failDeploy(build) {
+    return State.getBranchesInStates(build.repo, stateMap.failable)
         .then(function (data) {
             if (data && data.items && data.items.length > 0) {
                 return State.update({
@@ -102,8 +102,8 @@ function failDeploy () {
         });
 }
 
-function cancelDeploy () {
-  return State.getBranchesInStates(stateMap.cancelable)
+function cancelDeploy(build) {
+    return State.getBranchesInStates(build.repo, stateMap.cancelable)
         .then(function (data) {
           if (data && data.items && data.items.length > 0) {
             return State.update({
