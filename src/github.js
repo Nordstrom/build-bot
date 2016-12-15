@@ -72,7 +72,6 @@ var Github = {
         return merge(repo, "master", branch, MASTER_MERGE_MESSAGE + branch)
             .then(function (data) {
                 console.log("Success...");
-                console.log(data);
             })
             .catch(function (err) {
                 if (err.message.message.indexOf("409")) {
@@ -91,7 +90,6 @@ var Github = {
         return merge(repo, branch, "master", MERGE_MESSAGE + branch)
             .then(function(data){
                 console.log("Success...");
-                console.log(data);
                 return Promise.resolve();
             })
             .catch(function(err){
@@ -122,11 +120,7 @@ var Github = {
                 }
             })
             .then(function(data){
-                console.log(data);
                 return createReference(repo, data.sha, data.tag);
-            })
-            .then(function(data){
-                console.log(data)
             })
             .catch(function(err){
                 console.log(err.message);
@@ -270,7 +264,7 @@ function checkProxy(params){
 
 //** TEST CODE ****/
 
-Github.request("build-bot", "test-bot-branch", "0.0.10");
+// Github.request("build-bot", "test-bot-branch", "0.0.10");
 // createReference("build-bot", "20ee116227ec18666dc823ede06a3d3710fb05d3", "v0.0.8");
 //Github.preCheck('test-bot-branch');
 // Github.getUsername('test-bot-branch')

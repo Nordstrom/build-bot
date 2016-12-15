@@ -86,7 +86,7 @@ function start(verbose) {
         '*',
         '-inMemory',
         '-port',
-        8337
+        8000
     ];
 
     return stop()
