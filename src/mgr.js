@@ -56,7 +56,7 @@ function finishDeploy() {
                     state: 'finished'
                 });
             }
-            throw new Error('There is no build started yet');
+            throw new Error('There is no started build yet');
         });
 }
 function commitOrRollBack(state) {
@@ -70,7 +70,7 @@ function commitOrRollBack(state) {
                         state: state
                     });
                 }
-                throw new Error('There is no build finished yet');
+                throw new Error('There is no build to be committed/rolled back yet');
             });
     };
 }
