@@ -1,6 +1,6 @@
 {
   "name": "build-bot",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Bot that can Build, Deploy, and Whistle",
   "main": "index.js",
   "scripts": {
