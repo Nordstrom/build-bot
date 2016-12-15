@@ -174,6 +174,6 @@ function checkProxy(params){
 //     .then(function(data){
 //         console.log(data);
 //     });
-Github.push('test-bot-branch', "Testing flow with version update");
+//Github.push('test-bot-branch', "Testing flow with version update");
 //Github.mergeToMaster('test-bot-branch');
 //Github.release("0.0.5", "Github Release Notes");

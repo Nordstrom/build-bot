@@ -24,49 +24,91 @@ var shellMock = {
     }
 };
 
+var shellMockError = {
+    exec : function(command, options){
+        return {
+            code: 1,
+            stdout: "Error\n"
+        }
+    }
+};
 
 describe('Test Github', function () {
-    before(function () {
-        mockery.registerMock("rp", rpMock);
-        mockery.registerMock("shelljs", shellMock);
-        mockery.enable({
-            useCleanCache : true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
+    describe("Testing Github.push(branch, message), success", function(){
+        before(function () {
+            mockery.registerMock("shelljs", shellMock);
+            mockery.enable({
+                useCleanCache : true,
+                warnOnReplace: false,
+                warnOnUnregistered: false
+            });
+            github = require('../src/github');
         });
-        github = require('../src/github');
+        
+        it('should push to git', function () {
+            return github.push("test-branch", "message")
+                .then(function(){
+                    return Promise.resolve()
+                })
+                .catch(function(){
+                    return Promise.reject();
+                })
+        });
+
+        after(function(){
+            mockery.deregisterAll();
+            mockery.resetCache();
+        })
     });
+    
+    describe('Testing Github.push(branch, message), error', function(){
+        before(function () {
+            mockery.registerMock("shelljs", shellMockError);
+            mockery.enable({
+                useCleanCache : true,
+                warnOnReplace: false,
+                warnOnUnregistered: false
+            });
+            github = require('../src/github');
+        });
+        
+        it('should reject if Github.push has no branch', function () {
+            return github.push(null, "Message")
+                .then(function(data){
+                    return Promise.reject(data)
+                })
+                .catch(function(err){
+                    err.should.be.ok;
+                    return Promise.resolve();
+                })
+        });
+
+        it('should reject if Github.push has no message', function () {
+            return github.push("test-branch", null)
+                .then(function(data){
+                    return Promise.reject(data)
+                })
+                .catch(function(err){
+                    err.should.be.ok;
+                    return Promise.resolve();
+                })
+        });
+
+        it('should reject when shelljs.exec result.code == 1', function () {
+            return github.push("test-branch", "message")
+                .then(function(data){
+                    return Promise.reject(data)
+                })
+                .catch(function(err){
+                    err.should.be.ok;
+                    return Promise.resolve();
+                })
+        });
 
 
-    it('should push to git', function () {
-        return github.push("test-branch", "message")
-            .then(function(data){
-                return Promise.resolve(data)
-            })
-            .catch(function(err){
-                return Promise.reject();
-            })
-    });
-
-    it('should reject if Github.push has no branch', function () {
-        return github.push(null, "Message")
-            .then(function(data){
-                return Promise.reject(data)
-            })
-            .catch(function(err){
-                err.should.be.ok;
-                return Promise.resolve();
-            })
-    });
-
-    it('should reject if Github.push has no message', function () {
-        return github.push("test-branch", null)
-            .then(function(data){
-                return Promise.reject(data)
-            })
-            .catch(function(err){
-                err.should.be.ok;
-                return Promise.resolve();
-            })
-    });
+        after(function(){
+            mockery.deregisterAll();
+            mockery.resetCache();
+        })
+    })
 });

@@ -16,7 +16,6 @@ var Versioning = {
             throw new Error("Error updating version");
         } 
         var version = result.stdout.replace('\n', "").replace("v", "");
-        console.log("Updated to version: v" + version);
         return version;
     }
 };
