@@ -13,7 +13,7 @@ var _ = require('lodash'),
   }
 
 function getDeployedVersion (build) {
-  return State.getBranchesInStates(stateMap.committed)
+  return State.getBranchesInStates(build.repo, stateMap.committed)
         .then(data => {
           if (data && data.items && data.items.length > 0) {
             console.log(JSON.stringify(data.items))
@@ -23,43 +23,54 @@ function getDeployedVersion (build) {
         })
 }
 
-function requestDeploy(build) {
-    return State.getBranchesInStates(build.repo, stateMap.requestable)
-        .then(function (data) {
-            if (data && data.items && data.items.length === 0) {
-                return State.create({
-                    repo: build.repo,
-                    version: build.version,
-                    branch: build.branch,
-                    state: 'requested'
-                });
-            }
-            throw new Error('Cannot request a deploy since there is one going on');
-        });
+function getFinished (build) {
+  return State.getBranchesInStates(build.repo, stateMap.finished)
+    .then(data => {
+      if (data && data.items && data.items.length > 0) {
+        console.log(JSON.stringify(data.items))
+        const item = _.head(_.orderBy(data.items, ['updated'], ['desc']))
+        return item
+      }
+    })
 }
 
-function startDeploy(build) {
-    return State.getBranchesInStates(build.repo, stateMap.startable)
+function requestDeploy (build) {
+  return State.getBranchesInStates(build.repo, stateMap.requestable)
         .then(function (data) {
-            if (data && data.items && data.items.length > 0) {
-                return State.update({
-                    repo: data.items[0].repo,
-                    version: data.items[0].version,
-                    state: 'started'
-                });
-            }
-            console.log('start item', data.items[0])
+          if (data && data.items && data.items.length === 0) {
+            return State.create({
+              repo: build.repo,
+              version: build.version,
+              branch: build.branch,
+              state: 'requested'
+            })
+          }
+          throw new Error('Cannot request a deploy since there is one going on')
+        })
+}
+
+function startDeploy (build) {
+  return State.getBranchesInStates(build.repo, stateMap.startable)
+        .then(function (data) {
+          if (data && data.items && data.items.length > 0) {
             return State.update({
               repo: data.items[0].repo,
               version: data.items[0].version,
               state: 'started'
             })
-            throw new Error('There is already requested build. Need to Wait...')
+          }
+          console.log('start item', data.items[0])
+          return State.update({
+            repo: data.items[0].repo,
+            version: data.items[0].version,
+            state: 'started'
+          })
+          throw new Error('There is already requested build. Need to Wait...')
         })
 }
 
-function finishDeploy(build) {
-    return State.getBranchesInStates(build.repo, stateMap.finishable)
+function finishDeploy (build) {
+  return State.getBranchesInStates(build.repo, stateMap.finishable)
         .then(function (data) {
           if (data && data.items && data.items.length > 0) {
             console.log('finish item', data.items[0])
@@ -72,9 +83,9 @@ function finishDeploy(build) {
           throw new Error('There is no started build yet')
         })
 }
-function commitOrRollBack(state) {
-    return function (build) {
-        return State.getBranchesInStates(build.repo, stateMap.committable)
+function commitOrRollBack (state) {
+  return function (build) {
+    return State.getBranchesInStates(build.repo, stateMap.committable)
             .then(function (data) {
               if (data && data.items && data.items.length > 0) {
                 return State.update({
@@ -88,22 +99,22 @@ function commitOrRollBack(state) {
   }
 }
 
-function failDeploy(build) {
-    return State.getBranchesInStates(build.repo, stateMap.failable)
+function failDeploy (build) {
+  return State.getBranchesInStates(build.repo, stateMap.failable)
         .then(function (data) {
-            if (data && data.items && data.items.length > 0) {
-                return State.update({
-                    repo: data.items[0].repo,
-                    version: data.items[0].version,
-                    state: 'failed'
-                });
-            }
-            throw new Error('There is no build started or finished');
-        });
+          if (data && data.items && data.items.length > 0) {
+            return State.update({
+              repo: data.items[0].repo,
+              version: data.items[0].version,
+              state: 'failed'
+            })
+          }
+          throw new Error('There is no build started or finished')
+        })
 }
 
-function cancelDeploy(build) {
-    return State.getBranchesInStates(build.repo, stateMap.cancelable)
+function cancelDeploy (build) {
+  return State.getBranchesInStates(build.repo, stateMap.cancelable)
         .then(function (data) {
           if (data && data.items && data.items.length > 0) {
             return State.update({
@@ -117,6 +128,7 @@ function cancelDeploy(build) {
 
 module.exports = {
   getDeployedVersion: getDeployedVersion,
+  getFinished: getFinished,
 
     // Request a build/deploy - create dynamo record with requested state
   request: requestDeploy,
