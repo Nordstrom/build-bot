@@ -10,7 +10,7 @@ resources:  // CloudFormation template syntax
     stateTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: Hackanthon-Hal-BOT
+        TableName: Hackanthon-Hal-BOT-State
         AttributeDefinitions:
           - AttributeName: repo
             AttributeType: S

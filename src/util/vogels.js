@@ -10,7 +10,7 @@ function setDriver(local) {
     var driver = dynamo.getDriver(local);
     vogels.dynamoDriver(driver);
 
-    console.log(JSON.stringify(driver));
+    console.log('Dynamo Driver INFO: ', JSON.stringify(driver));
     vogels.log.level('debug');
 
     return vogels;

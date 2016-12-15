@@ -18,7 +18,7 @@ function getLocalConfig() {
         profile: 'local',
         accessKeyId: 'LOCALKEY',
         secretAccessKey: 'LOCALSECRET',
-        endpoint: 'http://127.0.0.1:8000'
+        endpoint: 'http://localhost:8000'
     };
 }
 
@@ -84,9 +84,7 @@ function start(verbose) {
         'DynamoDBLocal.jar',
         '-cors',
         '*',
-        '-inMemory',
-        '-port',
-        8000
+        '-inMemory'
     ];
 
     return stop()
