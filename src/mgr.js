@@ -25,13 +25,13 @@ function getDeployedVersion(build) {
 }
 
 function requestDeploy(build) {
-    return State.getBranchesInStates(stateMap.requestable)
+    return State.getBranchesInStates(build.repo, stateMap.requestable)
         .then(function (data) {
             if (data && data.items && data.items.length === 0) {
                 return State.create({
                     repo: build.repo,
-                    branch: build.branch,
                     version: build.version,
+                    branch: build.branch,
                     state: 'requested'
                 });
             }
@@ -40,16 +40,9 @@ function requestDeploy(build) {
 }
 
 function startDeploy(build) {
-    return State.getBranchesInStates(stateMap.startable)
+    return State.getBranchesInStates(build.repo, stateMap.startable)
         .then(function (data) {
             if (data && data.items && data.items.length > 0) {
-
-                if (!_.isEqual(
-                        _.pick(build, ['repo', 'branch', 'version']),
-                        _.pick(data.items[0], ['repo', 'branch', 'version'])
-                    )) {
-                    throw new Error('build has not been requested for the same branch or version');
-                }
                 return State.update({
                     repo: data.items[0].repo,
                     version: data.items[0].version,
@@ -60,8 +53,8 @@ function startDeploy(build) {
         });
 }
 
-function finishDeploy() {
-    return State.getBranchesInStates(stateMap.finishable)
+function finishDeploy(build) {
+    return State.getBranchesInStates(build.repo, stateMap.finishable)
         .then(function (data) {
             if (data && data.items && data.items.length > 0) {
                 return State.update({
@@ -75,8 +68,8 @@ function finishDeploy() {
 }
 function commitOrRollBack(state) {
 
-    return function () {
-        return State.getBranchesInStates(stateMap.committable)
+    return function (build) {
+        return State.getBranchesInStates(build.repo, stateMap.committable)
             .then(function (data) {
                 if (data && data.items && data.items.length > 0) {
                     return State.update({
@@ -90,12 +83,13 @@ function commitOrRollBack(state) {
     };
 }
 
-function failDeploy() {
-    return State.getBranchesInStates(stateMap.failable)
+function failDeploy(build) {
+    return State.getBranchesInStates(build.repo, stateMap.failable)
         .then(function (data) {
             if (data && data.items && data.items.length > 0) {
                 return State.update({
                     repo: data.items[0].repo,
+                    version: data.items[0].version,
                     state: 'failed'
                 });
             }
@@ -103,8 +97,8 @@ function failDeploy() {
         });
 }
 
-function cancelDeploy() {
-    return State.getBranchesInStates(stateMap.cancelable)
+function cancelDeploy(build) {
+    return State.getBranchesInStates(build.repo, stateMap.cancelable)
         .then(function (data) {
             if (data && data.items && data.items.length > 0) {
                 return State.update({

@@ -16,7 +16,7 @@ function loadItems(data) {
 function deleteBuildState(data) {
     var item = data && data.get();
     console.log('Destroy Build State: ', item.repo);
-    return State.table.destroyAsync({ repo: item.repo });
+    return State.table.destroyAsync({ repo: item.repo, version: item.version });
 }
 
 describe.skip('Test Mgr', function () {
@@ -48,7 +48,8 @@ describe.skip('Test Mgr', function () {
         return mgr.request(build)
             .then(function () {
                 return State.table.getAsync({
-                    repo: 'testRepo'
+                    repo: build.repo,
+                    version: build.version
                 });
             })
             .then(function (data) {
@@ -73,7 +74,6 @@ describe.skip('Test Mgr', function () {
             })
             .catch(function (err) {
                 err.message.should.equal('Cannot request a deploy since there is one going on');
-
             });
     });
 
@@ -91,7 +91,8 @@ describe.skip('Test Mgr', function () {
             })
             .then(function () {
                 return State.table.getAsync({
-                    repo: build.repo
+                    repo: build.repo,
+                    version: build.version
                 });
             })
             .then(function (data) {
@@ -109,13 +110,13 @@ describe.skip('Test Mgr', function () {
             version: '1.0'
         };
         return State.create(_.merge({
-            state: 'requested'
+            state: 'rolledBack'
         }, build))
             .then(function () {
-                return mgr.start(_.merge(build, { version: '1.1' }));
+                return mgr.start(build);
             })
             .catch(function (err) {
-                err.message.should.equal('build has not been requested for the same branch or version');
+                err.message.should.equal('There is already requested build. Need to Wait...');
 
             });
     });
@@ -138,12 +139,12 @@ describe.skip('Test Mgr', function () {
             State.create(_.assign({}, builds[1]))
         ])
             .then(function () {
-                return mgr.finish();
+                return mgr.finish(builds[0]);
             })
             .then(function () {
                 return Promise.all([
-                    State.table.getAsync({ repo: builds[0].repo }),
-                    State.table.getAsync({ repo: builds[1].repo })
+                    State.table.getAsync({ repo: builds[0].repo, version : builds[0].version }),
+                    State.table.getAsync({ repo: builds[1].repo, version : builds[1].version })
                 ]);
             })
             .then(function (results) {
@@ -177,7 +178,7 @@ describe.skip('Test Mgr', function () {
             State.create(_.assign({}, builds[1]))
         ])
             .then(function () {
-                return mgr.finish()
+                return mgr.finish(builds[0])
                     .catch(function (err) {
                         err.message.should.equal('There is no started build yet');
 
@@ -185,8 +186,8 @@ describe.skip('Test Mgr', function () {
             })
             .then(function () {
                 return Promise.all([
-                    State.table.getAsync({ repo: builds[0].repo }),
-                    State.table.getAsync({ repo: builds[1].repo })
+                    State.table.getAsync({ repo: builds[0].repo, version : builds[0].version }),
+                    State.table.getAsync({ repo: builds[1].repo, version : builds[1].version })
                 ]);
             })
             .then(function (results) {
@@ -201,7 +202,7 @@ describe.skip('Test Mgr', function () {
             });
     });
 
-    it('fail started build success', function () {
+    it('fail started build with success', function () {
         var builds = [{
             repo: 'testRepo',
             branch: 'testBranch',
@@ -219,12 +220,12 @@ describe.skip('Test Mgr', function () {
             State.create(_.assign({}, builds[1]))
         ])
             .then(function () {
-                return mgr.fail();
+                return mgr.fail(builds[1]);
             })
             .then(function () {
                 return Promise.all([
-                    State.table.getAsync({ repo: builds[0].repo }),
-                    State.table.getAsync({ repo: builds[1].repo })
+                    State.table.getAsync({ repo: builds[0].repo, version : builds[0].version }),
+                    State.table.getAsync({ repo: builds[1].repo, version : builds[1].version })
                 ]);
             })
             .then(function (results) {
@@ -257,15 +258,15 @@ describe.skip('Test Mgr', function () {
             State.create(_.assign({}, builds[1]))
         ])
             .then(function () {
-                return mgr.fail()
+                return mgr.fail(builds[1])
                     .catch(function (err) {
                         err.message.should.equal('There is no build started or finished');
                     });
             })
             .then(function () {
                 return Promise.all([
-                    State.table.getAsync({ repo: builds[0].repo }),
-                    State.table.getAsync({ repo: builds[1].repo })
+                    State.table.getAsync({ repo: builds[0].repo, version : builds[0].version }),
+                    State.table.getAsync({ repo: builds[1].repo, version : builds[1].version })
                 ]);
             })
             .then(function (results) {
@@ -298,12 +299,12 @@ describe.skip('Test Mgr', function () {
             State.create(_.assign({}, builds[1]))
         ])
             .then(function () {
-                return mgr.commit();
+                return mgr.commit(builds[1]);
             })
             .then(function () {
                 return Promise.all([
-                    State.table.getAsync({ repo: builds[0].repo }),
-                    State.table.getAsync({ repo: builds[1].repo })
+                    State.table.getAsync({ repo: builds[0].repo, version : builds[0].version }),
+                    State.table.getAsync({ repo: builds[1].repo, version : builds[1].version})
                 ]);
             })
             .then(function (results) {
@@ -336,12 +337,12 @@ describe.skip('Test Mgr', function () {
             State.create(_.assign({}, builds[1]))
         ])
             .then(function () {
-                return mgr.rollBack();
+                return mgr.rollBack(builds[1]);
             })
             .then(function () {
                 return Promise.all([
-                    State.table.getAsync({ repo: builds[0].repo }),
-                    State.table.getAsync({ repo: builds[1].repo })
+                    State.table.getAsync({ repo: builds[0].repo, version : builds[0].version }),
+                    State.table.getAsync({ repo: builds[1].repo, version : builds[1].version })
                 ]);
             })
             .then(function (results) {
@@ -374,15 +375,15 @@ describe.skip('Test Mgr', function () {
             State.create(_.assign({}, builds[1]))
         ])
             .then(function () {
-                return mgr.rollBack()
+                return mgr.rollBack(builds[1])
                     .catch(function(err){
                         err.message.should.equal('There is no build to be committed/rolled back yet');
                     })
             })
             .then(function () {
                 return Promise.all([
-                    State.table.getAsync({ repo: builds[0].repo }),
-                    State.table.getAsync({ repo: builds[1].repo })
+                    State.table.getAsync({ repo: builds[0].repo, version : builds[0].version }),
+                    State.table.getAsync({ repo: builds[1].repo, version : builds[1].version })
                 ]);
             })
             .then(function (results) {
