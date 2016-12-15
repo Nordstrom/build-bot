@@ -28,13 +28,18 @@
     "xo": "^0.17.1"
   },
   "dependencies": {
-    "aws-sdk": "^2.7.13",
+    "aws-sdk": "^2.7.14",
     "bluebird": "^3.4.6",
+    "child_process": "^1.0.2",
+    "glob": "^7.1.1",
     "https-proxy-agent": "^1.0.0",
+    "joi": "^10.0.6",
+    "lodash": "^4.17.2",
     "request": "^2.79.0",
     "request-promise": "^4.1.1",
     "shelljs": "^0.7.5",
     "slack": "^8.1.2",
+    "vogels": "^2.2.0",
     "vogels-promisified": "^2.2.3"
   }
 }
