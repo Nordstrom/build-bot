@@ -18,7 +18,7 @@ function getLocalConfig() {
         profile: 'local',
         accessKeyId: 'LOCALKEY',
         secretAccessKey: 'LOCALSECRET',
-        endpoint: 'http://127.0.0.1:8337'
+        endpoint: 'http://127.0.0.1:8000'
     };
 }
 
