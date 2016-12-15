@@ -1,6 +1,6 @@
 build:
   commit:
-    image: fengzhou/java-node:java8-node4
+    image: node:6
     commands:
       - npm install
-      - npm test
+      - echo "hello world"
