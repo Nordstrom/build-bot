@@ -4,5 +4,4 @@ build:
     commands:
       - mkdir -p ~/dynamodb_local
       - npm install
-      - npm test
       - echo "hello world"
