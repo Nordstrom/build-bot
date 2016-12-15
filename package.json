@@ -17,18 +17,20 @@
   },
   "homepage": "https://github.com/Nordstrom/build-bot#readme",
   "xo": {
-  	"esnext": true,
-  	"semicolon": false,
-  	"space": 4
+    "esnext": true,
+    "semicolon": false,
+    "space": 4
   },
   "devDependencies": {
     "mocha": "^3.2.0",
     "should": "^11.1.2",
-    "xo": "^0.17.1"
+    "snazzy": "^5.0.0",
+    "standard": "^8.6.0"
   },
   "dependencies": {
     "aws-sdk": "^2.7.13",
     "bluebird": "^3.4.6",
+    "botkit": "^0.4.3",
     "slack": "^8.1.2"
   }
 }

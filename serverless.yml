@@ -1,8 +1,7 @@
-service: kitt
+service: build-bot
 provider:
   name: aws
   runtime: nodejs4.3
-  stage: dev
   region: us-west-2
 
 functions:
@@ -13,8 +12,8 @@ functions:
 
     events:
       - http:
-        path: bot/events
-        method: post
+          path: bot/events
+          method: post
 
     # role: arn:aws:iam::XXXXXX:role/role # IAM role which which will be used for this function
     # environment: # Function level environment variables
