@@ -29,7 +29,6 @@ var Drone = {
             .then(function(data){
                 var build = data[0];
                 var status = build.status;
-                console.log(status);
                 return Promise.resolve(status);
             })
             .catch(function(err){
