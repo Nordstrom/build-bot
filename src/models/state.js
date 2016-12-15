@@ -4,8 +4,9 @@ var _ = require('lodash'),
     vogels = require('../util/vogels.js'),
     joi = require('joi'),
     table = vogels.define('State', {
-        tableName: 'Hackathan-Build-Bot-State',
+        tableName: 'build-bot-state',
         hashKey: 'repo',
+        rangeKey: 'version',
         schema: {
             repo: joi.string(),
             branch: joi.string(),

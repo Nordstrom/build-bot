@@ -40,6 +40,7 @@
     "lodash": "^4.17.2",
     "request": "^2.79.0",
     "request-promise": "^4.1.1",
+    "semver": "^5.3.0",
     "shelljs": "^0.7.5",
     "slack": "^8.1.2",
     "vogels": "^2.2.0",

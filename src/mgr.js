@@ -8,9 +8,21 @@ var _ = require('lodash'),
         finishable: ['started'],
         committable: ['finished'],
         cancelable: ['started', 'requested'],
-        failable: ['started', 'finished']
+        failable: ['started', 'finished'],
+        committed: ['committed']
     };
 
+
+function getDeployedVersion(build) {
+    return State.getBranchesInStates(stateMap.committed)
+        .then(data => {
+            if (data && data.items && data.items.length > 0) {
+                console.log(JSON.stringify(data.items))
+                const item = _.head(_.orderBy(data.items, ['updated'], ['desc']))
+                return item.version
+            }
+        })
+}
 
 function requestDeploy(build) {
     return State.getBranchesInStates(stateMap.requestable)
@@ -40,6 +52,7 @@ function startDeploy(build) {
                 }
                 return State.update({
                     repo: data.items[0].repo,
+                    version: data.items[0].version,
                     state: 'started'
                 });
             }
@@ -53,6 +66,7 @@ function finishDeploy() {
             if (data && data.items && data.items.length > 0) {
                 return State.update({
                     repo: data.items[0].repo,
+                    version: data.items[0].version,
                     state: 'finished'
                 });
             }
@@ -67,6 +81,7 @@ function commitOrRollBack(state) {
                 if (data && data.items && data.items.length > 0) {
                     return State.update({
                         repo: data.items[0].repo,
+                        version: data.items[0].version,
                         state: state
                     });
                 }
@@ -102,6 +117,8 @@ function cancelDeploy() {
 }
 
 module.exports = {
+    getDeployedVersion: getDeployedVersion,
+
     // Request a build/deploy - create dynamo record with requested state
     request: requestDeploy,
 
