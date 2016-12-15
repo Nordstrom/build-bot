@@ -142,5 +142,6 @@ function checkProxy(params){
 
 
 //** TEST CODE ****/
-Github.push('test-bot-branch', "Testing skip ci");
-// Github.release("0.0.1", "[skip ci]");
+//Github.push('test-bot-branch', "Testing skip ci");
+//Github.mergeToMaster('test-bot-branch');
+//Github.release("0.0.2", "[skip ci]");
