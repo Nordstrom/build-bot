@@ -12,6 +12,10 @@ const MERGE_MESSAGE = "Merging master into branch: ";
 const MASTER_MERGE_MESSAGE = "[skip ci] Merging into master from: ";
 
 var Github = {
+    getUsername : function(branch){
+
+    },
+    
     push : function(branch, message){
         if (!branch){
             return Promise.reject("No branch name on push");
@@ -20,7 +24,7 @@ var Github = {
         if (result.code == 1){
             return Promise.reject("Error on git add");
         }
-        result = sh.exec('git commit -m "auto commit from bot: ' + message + '"');
+        result = sh.exec('git commit -m "bot-commit: ' + message + '"');
         if (result.code == 1){
             return Promise.reject("Error on git commit");
         }
@@ -80,7 +84,7 @@ var Github = {
             body : {
                 "tag_name": "v" + version,
                 "target_commitish": "master",
-                "name": "RELEASE - v"+version,
+                "name": "Release - v"+version,
                 "body": notes,
                 "draft": false,
                 "prerelease": false
@@ -91,12 +95,12 @@ var Github = {
 
         return rp(params)
             .then(function(data){
-                console.log("data");
-                console.log(data);
+                console.log(success);
+                return Promise.resolve();
             })
             .catch(function(err){
-                console.log("err")
-                console.log(err);
+                console.log(err.message);
+                return Promise.reject(err);
             })
     }
 };
@@ -143,6 +147,7 @@ function checkProxy(params){
 
 //** TEST CODE ****/
 //Github.preCheck('test-bot-branch');
-Github.push('test-bot-branch', "Testing flow with version update");
+Github.getUsername('test-bot-branch')
+//Github.push('test-bot-branch', "Testing flow with version update");
 //Github.mergeToMaster('test-bot-branch');
-//Github.release("0.0.2", "[skip ci]");
+//Github.release("0.0.5", "Github Release Notes");
