@@ -26,27 +26,27 @@ function getDeployedVersion (build) {
 function requestDeploy (build) {
   return State.getBranchesInStates(stateMap.requestable)
         .then(function (data) {
-          if (data && data.items && data.items.length === 0) {
-            return State.create({
-              repo: build.repo,
-              branch: build.branch,
-              version: build.version,
-              state: 'requested'
-            })
-          }
-          throw new Error('Cannot request a deploy since there is one going on')
-        })
+            if (data && data.items && data.items.length === 0) {
+                return State.create({
+                    repo: build.repo,
+                    version: build.version,
+                    branch: build.branch,
+                    state: 'requested'
+                });
+            }
+            throw new Error('Cannot request a deploy since there is one going on');
+        });
 }
 
-function startDeploy (build) {
-  return State.getBranchesInStates(stateMap.startable)
+function startDeploy() {
+    return State.getBranchesInStates(stateMap.startable)
         .then(function (data) {
-          if (data && data.items && data.items.length > 0) {
-            if (!_.isEqual(
-                        _.pick(build, ['repo', 'branch', 'version']),
-                        _.pick(data.items[0], ['repo', 'branch', 'version'])
-                    )) {
-              throw new Error('build has not been requested for the same branch or version')
+            if (data && data.items && data.items.length > 0) {
+                return State.update({
+                    repo: data.items[0].repo,
+                    version: data.items[0].version,
+                    state: 'started'
+                });
             }
             console.log('start item', data.items[0])
             return State.update({
@@ -54,8 +54,7 @@ function startDeploy (build) {
               version: data.items[0].version,
               state: 'started'
             })
-          }
-          throw new Error('There is already requested build. Need to Wait...')
+            throw new Error('There is already requested build. Need to Wait...')
         })
 }
 
@@ -92,14 +91,15 @@ function commitOrRollBack (state) {
 function failDeploy () {
   return State.getBranchesInStates(stateMap.failable)
         .then(function (data) {
-          if (data && data.items && data.items.length > 0) {
-            return State.update({
-              repo: data.items[0].repo,
-              state: 'failed'
-            })
-          }
-          throw new Error('There is no build started or finished')
-        })
+            if (data && data.items && data.items.length > 0) {
+                return State.update({
+                    repo: data.items[0].repo,
+                    version: data.items[0].version,
+                    state: 'failed'
+                });
+            }
+            throw new Error('There is no build started or finished');
+        });
 }
 
 function cancelDeploy () {

@@ -27,9 +27,15 @@ var Drone = {
 
         return rp(params)
             .then(function(data){
-                var build = data[0];
+                var build;
+                for (var i in data){
+                    if (data[i].event == 'tag'){
+                        build = data[i];
+                        break;
+                    }
+                }
+                console.log(build)
                 var status = build.status;
-                console.log(status);
                 return Promise.resolve(status);
             })
             .catch(function(err){
