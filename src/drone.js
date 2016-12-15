@@ -31,8 +31,10 @@ var Drone = {
                 for (var i in data){
                     if (data[i].event == 'tag'){
                         build = data[i];
+                        break;
                     }
                 }
+                console.log(build)
                 var status = build.status;
                 return Promise.resolve(status);
             })

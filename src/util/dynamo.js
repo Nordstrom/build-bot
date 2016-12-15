@@ -27,7 +27,7 @@ function getDriver(local) {
         return new AWS.DynamoDB(getLocalConfig());
     } else {
         return new AWS.DynamoDB({
-            region: 'us-west-2'
+            region: 'us-east-1'
         });
     }
 }
