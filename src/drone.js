@@ -76,4 +76,4 @@ function checkProxy(params){
 
 //** TEST CODE ****/
 //getRepo("build-bot");
-Drone.getStatus("build-bot");
+//Drone.getStatus("build-bot");
