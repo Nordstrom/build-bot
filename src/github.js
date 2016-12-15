@@ -16,16 +16,16 @@ var Github = {
         if (!branch){
             return Promise.reject("No branch name on push");
         }
-        var code = sh.exec('git add .');
-        if (code == 1){
+        var result = sh.exec('git add .');
+        if (result.code == 1){
             return Promise.reject("Error on git add");
         }
-        code = sh.exec('git commit -m "auto commit from bot: ' + message + '"');
-        if (code == 1){
+        result = sh.exec('git commit -m "auto commit from bot: ' + message + '"');
+        if (result.code == 1){
             return Promise.reject("Error on git commit");
         }
-        code = sh.exec('git push origin ' + branch);
-        if (code == 1){
+        result = sh.exec('git push origin ' + branch);
+        if (result.code == 1){
             return Promise.reject("Error on git push");
         }
         return Promise.resolve();
@@ -142,6 +142,6 @@ function checkProxy(params){
 
 
 //** TEST CODE ****/
-//Github.push('test-bot-branch', "Testing skip ci");
+Github.push('test-bot-branch', "Testing skip ci");
 //Github.mergeToMaster('test-bot-branch');
 //Github.release("0.0.2", "[skip ci]");
