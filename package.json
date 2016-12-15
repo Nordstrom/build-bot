@@ -26,11 +26,13 @@
     "mocha": "^3.2.0",
     "mockery": "^2.0.0",
     "should": "^11.1.2",
-    "xo": "^0.17.1"
+    "snazzy": "^5.0.0",
+    "standard": "^8.6.0"
   },
   "dependencies": {
     "aws-sdk": "^2.7.14",
     "bluebird": "^3.4.6",
+    "botkit": "^0.4.3",
     "child_process": "^1.0.2",
     "glob": "^7.1.1",
     "https-proxy-agent": "^1.0.0",
