@@ -40,8 +40,8 @@ var Github = {
     },
     
     push : function(branch, message){
-        if (!branch){
-            return Promise.reject("No branch name on push");
+        if (!branch || !message){
+            return Promise.reject("Invalid Arguments");
         }
         var result = sh.exec('git add .');
         if (result.code == 1){
