@@ -6,7 +6,7 @@ var rp = require('request-promise'),
 const BASE_URL = "https://api.github.com/repos/";
 const AUTH_URL = "https://github.com/login/oauth/authorize";
 const OWNER = "Nordstrom/";
-const BASIC_AUTH = "Basic amFzb25vbG1zdGVhZDMzOkJAc2ViYWxsMzM=";
+const BASIC_AUTH = "Basic am9obm55NS1ib3Q6SjBobm55NQ==";
 const MERGE_MESSAGE = "Merging master into branch: ";
 const TAG_MESSAGE = "Tagging branch for deploy. Tag: ";
 const MASTER_MERGE_MESSAGE = "[skip ci] Merging into master from: ";
