@@ -67,7 +67,7 @@ var Github = {
                 console.log("Success...");
             })
             .catch(function(err){
-                if (err.message.message.indexOf("409")){
+                if (err.message.message.indexOf("409") > -1){
                     return Promise.reject("Conflict merging master into " + branch);
                 } else {
                     return Promise.reject(err.message);

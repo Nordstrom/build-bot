@@ -9,7 +9,7 @@ const MINOR = "minor";
 var Versioning = {
     update : function(type){
         if (type != PATCH && type != MAJOR && type != MINOR) {
-            throw new Error("Not valid verstion update type");
+            throw new Error("Not valid version update type");
         }
         var result = sh.exec("npm version " + type + " --force", {silent : true});
         if (result.code == 1){
