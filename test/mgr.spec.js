@@ -87,7 +87,7 @@ describe.skip('Test Mgr', function () {
             state: 'requested'
         }, build))
             .then(function () {
-                return mgr.start();
+                return mgr.start(build);
             })
             .then(function () {
                 return State.table.getAsync({
@@ -113,7 +113,7 @@ describe.skip('Test Mgr', function () {
             state: 'rolledBack'
         }, build))
             .then(function () {
-                return mgr.start();
+                return mgr.start(build);
             })
             .catch(function (err) {
                 err.message.should.equal('There is already requested build. Need to Wait...');
@@ -139,7 +139,7 @@ describe.skip('Test Mgr', function () {
             State.create(_.assign({}, builds[1]))
         ])
             .then(function () {
-                return mgr.finish();
+                return mgr.finish(builds[0]);
             })
             .then(function () {
                 return Promise.all([
@@ -178,7 +178,7 @@ describe.skip('Test Mgr', function () {
             State.create(_.assign({}, builds[1]))
         ])
             .then(function () {
-                return mgr.finish()
+                return mgr.finish(builds[0])
                     .catch(function (err) {
                         err.message.should.equal('There is no started build yet');
 
@@ -220,7 +220,7 @@ describe.skip('Test Mgr', function () {
             State.create(_.assign({}, builds[1]))
         ])
             .then(function () {
-                return mgr.fail();
+                return mgr.fail(builds[1]);
             })
             .then(function () {
                 return Promise.all([
@@ -258,7 +258,7 @@ describe.skip('Test Mgr', function () {
             State.create(_.assign({}, builds[1]))
         ])
             .then(function () {
-                return mgr.fail()
+                return mgr.fail(builds[1])
                     .catch(function (err) {
                         err.message.should.equal('There is no build started or finished');
                     });
@@ -299,7 +299,7 @@ describe.skip('Test Mgr', function () {
             State.create(_.assign({}, builds[1]))
         ])
             .then(function () {
-                return mgr.commit();
+                return mgr.commit(builds[1]);
             })
             .then(function () {
                 return Promise.all([
@@ -337,7 +337,7 @@ describe.skip('Test Mgr', function () {
             State.create(_.assign({}, builds[1]))
         ])
             .then(function () {
-                return mgr.rollBack();
+                return mgr.rollBack(builds[1]);
             })
             .then(function () {
                 return Promise.all([
@@ -375,7 +375,7 @@ describe.skip('Test Mgr', function () {
             State.create(_.assign({}, builds[1]))
         ])
             .then(function () {
-                return mgr.rollBack()
+                return mgr.rollBack(builds[1])
                     .catch(function(err){
                         err.message.should.equal('There is no build to be committed/rolled back yet');
                     })

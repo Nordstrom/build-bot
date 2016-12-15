@@ -17,10 +17,10 @@ var _ = require('lodash'),
     });
 
 
-function getBranchesInStates(states) {
+function getBranchesInStates(repo, states) {
 
-    return table.scan()
-        .where('state').in(states)
+    return table.query(repo)
+        .filter('state').in(states)
         .execAsync()
         .then(function (data) {
             return {
