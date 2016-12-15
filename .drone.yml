@@ -3,4 +3,4 @@ build:
     image: node:6
     commands:
       - npm install
-      - npm run commit
+      - npm test
