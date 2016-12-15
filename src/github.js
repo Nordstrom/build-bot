@@ -56,7 +56,25 @@ var Github = {
                 console.log(err.message);
                 return Promise.reject(err);
             })
+    },
+    push : function(repo, branch, message){
+    if (!branch || !message || !repo){
+        return Promise.reject("Invalid Arguments");
     }
+    var result = sh.exec('git add .');
+    if (result.code == 1){
+        return Promise.reject("Error on git add");
+    }
+    result = sh.exec('git commit -m "bot-commit: ' + message + '"');
+    if (result.code == 1){
+        return Promise.reject("Error on git commit");
+    }
+    result = sh.exec('git push origin ' + branch);
+    if (result.code == 1){
+        return Promise.reject("Error on git push");
+    }
+    return Promise.resolve();
+}
 
 };
 
@@ -199,25 +217,6 @@ function createReference(repo, sha, tag){
     return rp(params);
 }
 
-function push(repo, branch, message){
-    if (!branch || !message || !repo){
-        return Promise.reject("Invalid Arguments");
-    }
-    var result = sh.exec('git add .');
-    if (result.code == 1){
-        return Promise.reject("Error on git add");
-    }
-    result = sh.exec('git commit -m "bot-commit: ' + message + '"');
-    if (result.code == 1){
-        return Promise.reject("Error on git commit");
-    }
-    result = sh.exec('git push origin ' + branch);
-    if (result.code == 1){
-        return Promise.reject("Error on git push");
-    }
-    return Promise.resolve();
-}
-
 
 function getUsername(repo, branch){
     if (!repo || !branch){
@@ -277,7 +276,7 @@ function checkProxy(params){
 
 
 //** TEST CODE ****/
-Github.commitAndRelease("build-bot", "test-bot-branch", "0.0.11", "These release notes rule!");
+//Github.commitAndRelease("build-bot", "test-bot-branch", "0.0.11", "These release notes rule!");
 // Github.request("build-bot", "test-bot-branch", "0.0.10");
 // createReference("build-bot", "20ee116227ec18666dc823ede06a3d3710fb05d3", "v0.0.8");
 //Github.preCheck('test-bot-branch');
