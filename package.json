@@ -23,11 +23,18 @@
     "space": 4
   },
   "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-gunzip": "0.0.3",
+    "gulp-untar": "0.0.5",
+    "gulp-util": "^3.0.7",
     "mocha": "^3.2.0",
     "mockery": "^2.0.0",
+    "request-progress": "^3.0.0",
     "should": "^11.1.2",
     "snazzy": "^5.0.0",
-    "standard": "^8.6.0"
+    "standard": "^8.6.0",
+    "vinyl-s3": "^0.3.1",
+    "vinyl-source-stream": "^1.1.0"
   },
   "dependencies": {
     "aws-sdk": "^2.7.14",

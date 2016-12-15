@@ -110,9 +110,9 @@ function release(repo, version, notes){
         json : true,
         headers : HEADERS,
         body : {
-            "tag_name": "v" + version,
+            "tag_name": version,
             "target_commitish": "master",
-            "name": "Release - v"+version,
+            "name": "Release - "+version,
             "body": notes,
             "draft": false,
             "prerelease": false
@@ -123,7 +123,7 @@ function release(repo, version, notes){
 
     return rp(params)
         .then(function(data){
-            console.log("success");
+            console.log("Relase Success");
             return Promise.resolve();
         })
         .catch(function(err){
@@ -162,7 +162,7 @@ function tag(repo, sha, version){
         json : true,
         headers : HEADERS,
         body : {
-            "tag": "v"+version,
+            "tag": version,
             "message": TAG_MESSAGE+version,
             "object": sha,
             "type" : "commit",
@@ -276,7 +276,7 @@ function checkProxy(params){
 
 
 //** TEST CODE ****/
-//Github.commitAndRelease("build-bot", "test-bot-branch", "0.0.11", "These release notes rule!");
+// Github.commitAndRelease("build-bot", "test-bot-branch", "0.0.11", "These release notes rule!");
 // Github.request("build-bot", "test-bot-branch", "0.0.10");
 
 // createReference("build-bot", "20ee116227ec18666dc823ede06a3d3710fb05d3", "v0.0.8");
