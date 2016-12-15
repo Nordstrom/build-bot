@@ -5,6 +5,23 @@ provider:
   stage: dev
   region: us-west-2
 
+# Resources
+resources:  // CloudFormation template syntax
+  Resources:
+    stateTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Hackanthon-Hal-BOT
+        AttributeDefinitions:
+          - AttributeName: repo
+            AttributeType: S
+        KeySchema:
+          - AttributeName: repo
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
 functions:
   deploy:
     handler: src/bot.handle
