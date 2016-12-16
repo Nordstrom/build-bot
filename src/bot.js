@@ -104,7 +104,7 @@ controller.hears(['deploy'], 'direct_message,direct_mention,mention', function (
           if (err) return
           convo.ask(msg, [
             {
-              pattern: 'yes',
+              pattern: /(yes|y|uhuh|ya|yup|da|haan|qui|si|shi)/,
               callback: function (response, convo) {
                                       // since no further messages are queued after this,
                                       // the conversation will end naturally with status == 'completed'
@@ -164,6 +164,74 @@ controller.hears(['deploy'], 'direct_message,direct_mention,mention', function (
         })
       })
     })
+})
+
+controller.hears(['commit'], 'direct_message,direct_mention,mention', function (bot, message) {
+  console.log(JSON.stringify(message))
+  const match = message.text.match(/commit\s([a-zA-Z0-9-_/]+)/)
+  console.log(match)
+  let bld = {
+    repo: match[1]
+  }
+  const msgPostfix = 'you sure you want to commit your deploy of repo *' + bld.repo + '*?'
+
+  controller.storage.users.get(message.user, function (err, user) {
+    const msg = (user && user.name)
+          ? user.name + ', are ' + msgPostfix
+          : 'Are ' + msgPostfix
+
+    bot.startConversation(message, function (err, convo) {
+      if (err) return
+      convo.ask(msg, [
+        {
+          pattern: /(yes|y|uhuh|ya|yup|da|haan|qui|si|shi)/,
+          callback: function (response, convo) {
+                                      // since no further messages are queued after this,
+                                      // the conversation will end naturally with status == 'completed'
+            convo.next()
+          }
+        },
+        {
+          pattern: 'no',
+          callback: function (response, convo) {
+                                      // stop the conversation. this will cause it to end with status == 'stopped'
+            convo.stop()
+          }
+        },
+        {
+          default: true,
+          callback: function (response, convo) {
+            convo.repeat()
+            convo.next()
+          }
+        }
+      ])
+
+      convo.on('end', function (convo) {
+        if (convo.status === 'completed') {
+          bot.reply(message, 'OK! I am committing the deploy now...')
+          ctrl.monitor(bld, {
+            committed: () => {
+              bot.reply(message, `Excellent! Your deploy has been *COMMITTED*!
+                * The branch was merged to master and tagged
+                * Your stories have been marked released
+                * Artifacts have been saved
+              `)
+            },
+            finish: () => {
+              bot.reply(message, 'YAY! Your deploy has *FINISHED* successfully... Test it out and then commit...  `Number 5 is ALIVE!`')
+            },
+            fail: () => {
+              bot.reply(message, 'OH NO! You deploy *FAILED*!! Go to check it out!!  `No Disassemble, No Disassemble!`')
+            }
+          })
+        } else {
+                              // this happens if the conversation ended prematurely for some reason
+          bot.reply(message, 'OK, nevermind!  To rollback the deploy tell me to rollback...')
+        }
+      })
+    })
+  })
 })
 
 controller.hears(['hello', 'hi'], 'direct_message,direct_mention,mention', function (bot, message) {

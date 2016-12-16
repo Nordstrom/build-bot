@@ -1,7 +1,7 @@
 # build-bot
 Bot that can Build, Deploy, and Whistle
 
-
+ha
 # Deploy / Commmit Flow
 1. @johnny5 deploy xyz minor
 2. bot asks for confirmation
@@ -25,6 +25,8 @@ Bot that can Build, Deploy, and Whistle
 22. bot tags master with version and release notes from story descriptions.
 23. bot updates jira fixed version on stories
 24. bot attempts Mgr.commitDeploy
+
+BLAHH
 
 # Deploy / Rollback Flow
 1. @johnny5 deploy xyz minor
