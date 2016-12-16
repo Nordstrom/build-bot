@@ -15,7 +15,6 @@ var stateHandlers = {
             this.attributes['index'] = 0;
             this.attributes['offsetInMilliseconds'] = 0;
             this.attributes['loop'] = true;
-            this.attributes['shuffle'] = false;
             this.attributes['playbackIndexChanged'] = true;
             //  Change state to START_MODE
             this.handler.state = constants.states.START_MODE;
@@ -33,7 +32,6 @@ var stateHandlers = {
                 this.attributes['index'] = 0;
                 this.attributes['offsetInMilliseconds'] = 0;
                 this.attributes['loop'] = true;
-                this.attributes['shuffle'] = false;
                 this.attributes['playbackIndexChanged'] = true;
                 //  Change state to START_MODE
                 this.handler.state = constants.states.START_MODE;
@@ -89,15 +87,10 @@ var stateHandlers = {
         },
         'PlayAudio' : function () { controller.play.call(this) },
         'AMAZON.NextIntent' : function () { controller.playNext.call(this) },
-        'AMAZON.PreviousIntent' : function () { controller.playPrevious.call(this) },
-        'AMAZON.PauseIntent' : function () { controller.stop.call(this) },
+        'AMAZON.PauseIntent' : function () { controller.stop.call(this) }, //
         'AMAZON.StopIntent' : function () { controller.stop.call(this) },
         'AMAZON.CancelIntent' : function () { controller.stop.call(this) },
         'AMAZON.ResumeIntent' : function () { controller.play.call(this) },
-        'AMAZON.LoopOnIntent' : function () { controller.loopOn.call(this) },
-        'AMAZON.LoopOffIntent' : function () { controller.loopOff.call(this) },
-        'AMAZON.ShuffleOnIntent' : function () { controller.shuffleOn.call(this) },
-        'AMAZON.ShuffleOffIntent' : function () { controller.shuffleOff.call(this) },
         'AMAZON.StartOverIntent' : function () { controller.startOver.call(this) },
         'AMAZON.HelpIntent' : function () {
             // This will called while audio is playing and a user says "ask <invocation_name> for help"
@@ -122,7 +115,7 @@ var stateHandlers = {
         'PlayCommandIssued' : function () { controller.play.call(this) },
         'PauseCommandIssued' : function () { controller.stop.call(this) },
         'NextCommandIssued' : function () { controller.playNext.call(this) },
-        'PreviousCommandIssued' : function () { controller.playPrevious.call(this) }
+        'PreviousCommandIssued' : function () { controller.playNext.call(this) } // there is no previous
     }),
     resumeDecisionModeIntentHandlers : Alexa.CreateStateHandler(constants.states.RESUME_DECISION_MODE, {
         /*
@@ -249,71 +242,6 @@ var controller = function () {
 
             controller.play.call(this);
         },
-        playPrevious: function () {
-            /*
-             *  Called when AMAZON.PreviousIntent or PlaybackController.PreviousCommandIssued is invoked.
-             *  Index is computed using token stored when AudioPlayer.PlaybackStopped command is received.
-             *  If reached at the end of the playlist, choose behavior based on "loop" flag.
-             */
-            var index = this.attributes['index'];
-            index -= 1;
-            // Check for last audio file.
-            if (index === -1) {
-                if (this.attributes['loop']) {
-                    index = audioData.length - 1;
-                } else {
-                    // Reached at the end. Thus reset state to start mode and stop playing.
-                    this.handler.state = constants.states.START_MODE;
-
-                    var message = 'You have reached at the start of the playlist.';
-                    this.response.speak(message).audioPlayerStop();
-                    return this.emit(':responseReady');
-                }
-            }
-            // Set values to attributes.
-            this.attributes['index'] = index;
-            this.attributes['offsetInMilliseconds'] = 0;
-            this.attributes['playbackIndexChanged'] = true;
-
-            controller.play.call(this);
-        },
-        loopOn: function () {
-            // Turn on loop play.
-            this.attributes['loop'] = true;
-            var message = 'Loop turned on.';
-            this.response.speak(message);
-            this.emit(':responseReady');
-        },
-        loopOff: function () {
-            // Turn off looping
-            this.attributes['loop'] = false;
-            var message = 'Loop turned off.';
-            this.response.speak(message);
-            this.emit(':responseReady');
-        },
-        shuffleOn: function () {
-            // Turn on shuffle play.
-            this.attributes['shuffle'] = true;
-            var self = this;
-            shuffleOrder(function (newOrder) {
-                // Play order have been shuffled. Re-initializing indices and playing first song in shuffled order.
-                self.attributes['playOrder'] = newOrder;
-                self.attributes['index'] = 0;
-                self.attributes['offsetInMilliseconds'] = 0;
-                self.attributes['playbackIndexChanged'] = true;
-                controller.play.call(this);
-            });
-        },
-        shuffleOff: function () {
-            // Turn off shuffle play. 
-            if (this.attributes['shuffle']) {
-                this.attributes['shuffle'] = false;
-                // Although changing index, no change in audio file being played as the change is to account for reordering playOrder
-                this.attributes['index'] = this.attributes['playOrder'][this.attributes['index']];
-                this.attributes['playOrder'] = Array.apply(null, {length: audioData.length}).map(Number.call, Number);
-            }
-            controller.play.call(this);
-        },
         startOver: function () {
             // Start over the current audio file.
             this.attributes['offsetInMilliseconds'] = 0;
@@ -350,21 +278,4 @@ function canSpeak(){
      * Thus adding restriction of request type being "IntentRequest".
      */
     return (this.event.request.type === 'IntentRequest');
-}
-
-
-function shuffleOrder(callback) {
-    // Algorithm : Fisher-Yates shuffle
-    var array = Array.apply(null, {length: audioData.length}).map(Number.call, Number);
-    var currentIndex = array.length;
-    var temp, randomIndex;
-
-    while (currentIndex >= 1) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-        temp = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temp;
-    }
-    callback(array);
 }
