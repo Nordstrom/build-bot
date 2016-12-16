@@ -182,9 +182,6 @@ var controller = function () {
             var token = String(this.attributes['index']);
             var playBehavior = 'REPLACE_ALL';
             var podcast = audioData[0];
-            console.log("podcast");
-            console.log(podcast);
-            console.log(JSON.stringify(podcast));
             var offsetInMilliseconds = this.attributes['offsetInMilliseconds'];
             // Since play behavior is REPLACE_ALL, enqueuedToken attribute need to be set to null.
             this.attributes['enqueuedToken'] = null;
@@ -200,9 +197,6 @@ var controller = function () {
             }
 
             this.response.audioPlayerPlay(playBehavior, podcast.url, token, null, offsetInMilliseconds);
-            console.log('response is ');
-            console.log(this.response);
-            console.log(JSON.stringify(this.response));
             this.emit(':responseReady');
         },
         stop: function () {
@@ -231,7 +225,6 @@ var controller = function () {
                 return this.emit(':responseReady');
             } else if (index == 1) {
                 // build is done
-                console.log('index is 1, build is done?');
             } else if ((index == (audioData.length - 1)) && this.attributes['loop']) {
                 index = 0;
             }

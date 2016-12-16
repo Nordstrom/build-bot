@@ -50,7 +50,7 @@ var audioEventHandlers = Alexa.CreateStateHandler(constants.states.PLAY_MODE, {
         var currentToken = this.attributes['token'];
         var enqueuedToken = this.attributes['enqueuedToken'];
         if ((currentToken == '1000') || (enqueuedToken == '1000')) {
-            console.log('completed build song enqueued already!');
+            console.log('Completed build song enqueued already!');
             /*
              * Since AudioPlayer.PlaybackNearlyFinished Directive are prone to be delivered multiple times during the
              * same audio being played.
@@ -96,22 +96,14 @@ function handleDynamoResponse(err, resp){
 
     if (err){
         // error reading from dynamo table
-        console.log('error reading from manager dynamo table!');
+        console.log('Error reading from manager dynamo table!');
         console.log(err);
-        console.log(JSON.stringify(err));
         return this.context.succeed(true);
     } else {
         var items = resp.Items;
         // check res
-        console.log('number of items found');
-        console.log(resp.Count);
         var firstItem = items[0].get();
-        console.log('first item is ');
-        console.log(JSON.stringify(firstItem));
         if (firstItem.state === 'committed') {
-            console.log('fist item has state committed');
-            console.log(firstItem);
-            console.log('replacing queue with complete');
             playBehavior = 'ENQUEUE';
             songStreamUrl = buildCompleteUrl;
             enqueuedToken = 1000;
@@ -132,17 +124,6 @@ function handleDynamoResponse(err, resp){
             var podcast = audioData[0];
             songStreamUrl = podcast.url;
         }
-        console.log('playBehavior');
-        console.log(playBehavior);
-
-        console.log('url is ');
-        console.log(songStreamUrl);
-
-        console.log('enqueued token');
-        console.log(enqueuedToken);
-
-        console.log("expectedPreviousToken");
-        console.log(expectedPreviousToken);
 
         this.response.audioPlayerPlay(playBehavior, songStreamUrl, enqueuedToken, expectedPreviousToken, 0);
         this.emit(':responseReady');
