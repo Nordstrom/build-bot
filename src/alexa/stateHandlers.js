@@ -80,16 +80,9 @@ var stateHandlers = {
              */
             var message;
             var reprompt;
-            if (this.attributes['playbackFinished']) {
-                this.handler.state = constants.states.START_MODE;
-                message = 'Welcome to your build checker';
-                reprompt = 'You can say, start checking the deploy, to begin.';
-            } else {
-                this.handler.state = constants.states.RESUME_DECISION_MODE;
-                message = 'You were listening to ' + audioData[this.attributes['playOrder'][this.attributes['index']]].title +
-                    ' Would you like to resume?';
-                reprompt = 'You can say yes to resume or no to play from the top.';
-            }
+            this.handler.state = constants.states.START_MODE;
+            message = 'Welcome to your build checker';
+            reprompt = 'You can say, start checking the build, to begin.';
 
             this.response.speak(message).listen(reprompt);
             this.emit(':responseReady');
@@ -109,7 +102,7 @@ var stateHandlers = {
         'AMAZON.HelpIntent' : function () {
             // This will called while audio is playing and a user says "ask <invocation_name> for help"
             var message = 'You are listening to the Johnny <say-as interpret-as="digits">5</say-as> Build Checker. ' +
-                'At any time, you can say start checking the deploy to hear the status of your latest build.';
+                'At any time, you can say start checking the build to hear the status of your latest build.';
             this.response.speak(message).listen(message);
             this.emit(':responseReady');
         },
@@ -117,7 +110,7 @@ var stateHandlers = {
             // No session ended logic
         },
         'Unhandled' : function () {
-            var message = 'Sorry, I could not understand. You can say, you can say start checking the deploy to hear the status of your latest build.';
+            var message = 'Sorry, I could not understand. You can say, start checking the build to hear the status of your latest build.';
             this.response.speak(message).listen(message);
             this.emit(':responseReady');
         }

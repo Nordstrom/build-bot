@@ -16,7 +16,6 @@ var audioEventHandlers = Alexa.CreateStateHandler(constants.states.PLAY_MODE, {
         this.attributes['token'] = getToken.call(this);
         this.attributes['index'] = getIndex.call(this);
         this.attributes['playbackFinished'] = false;
-        this.attributes['buildComplete'] = checkBuildComplete.call(this);
         this.emit(':saveState', true);
     },
     'PlaybackFinished' : function () {
@@ -27,7 +26,6 @@ var audioEventHandlers = Alexa.CreateStateHandler(constants.states.PLAY_MODE, {
          */
         this.attributes['playbackFinished'] = true;
         this.attributes['enqueuedToken'] = false;
-        this.attributes['buildComplete'] = checkBuildComplete.call(this);
         this.emit(':saveState', true);
     },
     'PlaybackStopped' : function () {
@@ -48,13 +46,17 @@ var audioEventHandlers = Alexa.CreateStateHandler(constants.states.PLAY_MODE, {
          * Storing details in dynamoDB using attributes.
          * Enqueuing the next audio file.
          */
-        var expectedPreviousToken = this.attributes['token'];
-        if (this.attributes['enqueuedToken'] == '1000') {
+        this.attributes['token'] = getToken.call(this);
+        var currentToken = this.attributes['token'];
+        var enqueuedToken = this.attributes['enqueuedToken'];
+        if ((currentToken == '1000') || (enqueuedToken == '1000')) {
+            console.log('completed build song enqueued already!');
             /*
              * Since AudioPlayer.PlaybackNearlyFinished Directive are prone to be delivered multiple times during the
              * same audio being played.
              * If an audio file is already enqueued, exit without enqueuing again.
              */
+
             return this.context.succeed(true);
         } else {
             var cb = handleDynamoResponse.bind(this);
@@ -107,7 +109,7 @@ function handleDynamoResponse(err, resp){
         console.log('first item is ');
         console.log(JSON.stringify(firstItem));
         if (firstItem.state === 'committed') {
-            playBehavior = 'REPLACE_ALL';
+            playBehavior = 'REPLACE_ENQUEUED';
             songStreamUrl = buildCompleteUrl;
             enqueuedToken = 1000;
             this.attributes['enqueuedToken'] = String(enqueuedToken);
@@ -120,7 +122,7 @@ function handleDynamoResponse(err, resp){
                 enqueueIndex = 0;
             }
             // Setting attributes to indicate item is enqueued.
-            this.attributes['enqueuedToken'] = String(this.attributes['playOrder'][enqueueIndex]);
+            this.attributes['enqueuedToken'] = String(0);
 
             enqueuedToken = this.attributes['enqueuedToken'];
             var podcast = audioData[0];
@@ -131,6 +133,12 @@ function handleDynamoResponse(err, resp){
 
         console.log('url is ');
         console.log(songStreamUrl);
+
+        console.log('enqueued token');
+        console.log(enqueuedToken);
+
+        console.log("expectedPreviousToken");
+        console.log(expectedPreviousToken);
 
         this.response.audioPlayerPlay(playBehavior, songStreamUrl, enqueuedToken, expectedPreviousToken, 0);
         this.emit(':responseReady');
