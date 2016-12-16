@@ -63,9 +63,9 @@ function commit (build, actions) {
       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec placerat blandit tristique. Nullam eu dui urna. Morbi dictum tempor lectus, in bibendum est aliquam vel. Phasellus dolor dolor, commodo quis tincidunt facilisis, blandit blandit elit. Nam iaculis velit dui, in lobortis augue semper volutpat. Maecenas pharetra elit quis auctor egestas. In hac habitasse platea dictumst. Nunc congue blandit felis nec semper. Curabitur non vehicula augue.
       `
       return git.commitAndRelease(build.repo, branch, version, releaseNotes)
-        //.then(() => {
-        //   jira.release(branch, version,)
-        //})
+        .then(() => {
+          jira.release(branch, version,)
+        })
         .then(() => {
           actions.committed()
         })
