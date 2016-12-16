@@ -9,7 +9,8 @@ var _ = require('lodash'),
     committable: ['finished'],
     cancelable: ['started', 'requested'],
     failable: ['started', 'finished'],
-    committed: ['committed']
+    committed: ['committed'],
+      finished: ['finished', 'committed']
   }
 
 function getDeployedVersion (build) {
