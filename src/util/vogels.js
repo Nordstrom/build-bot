@@ -30,7 +30,7 @@ function scanTable(model) {
 
 
 // setDriver(!(process.env.REMOTE_DYNAMO || args.remote));
-// vogels.log.level('debug');
+vogels.log.level('debug');
 
 vogels.setDriver = setDriver;
 vogels.scanTable = scanTable;
