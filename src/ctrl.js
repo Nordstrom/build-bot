@@ -49,19 +49,26 @@ function monitor (build, actions) {
           clearInterval(i)
         }
       })
+      .catch(err => {
+        console.log(err)
+        clearInterval(i)
+      })
   }, 1000)
 }
 
 function commit (build, actions) {
   return mgr.getFinished(build)
     .then(bld => {
-      const releaseNotes = `
-      #### My Story
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec placerat blandit tristique. Nullam eu dui urna. Morbi dictum tempor lectus, in bibendum est aliquam vel. Phasellus dolor dolor, commodo quis tincidunt facilisis, blandit blandit elit. Nam iaculis velit dui, in lobortis augue semper volutpat. Maecenas pharetra elit quis auctor egestas. In hac habitasse platea dictumst. Nunc congue blandit felis nec semper. Curabitur non vehicula augue.
-      #### Your Story
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec placerat blandit tristique. Nullam eu dui urna. Morbi dictum tempor lectus, in bibendum est aliquam vel. Phasellus dolor dolor, commodo quis tincidunt facilisis, blandit blandit elit. Nam iaculis velit dui, in lobortis augue semper volutpat. Maecenas pharetra elit quis auctor egestas. In hac habitasse platea dictumst. Nunc congue blandit felis nec semper. Curabitur non vehicula augue.
-      `
-      return git.commitAndRelease(build.repo, branch, version, releaseNotes)
+      const releaseNotes =
+      '#### My Story\n' +
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec placerat blandit tristique. Nullam eu dui urna. Morbi dictum tempor lectus, in bibendum est aliquam vel. Phasellus dolor dolor, commodo quis tincidunt facilisis, blandit blandit elit. Nam iaculis velit dui, in lobortis augue semper volutpat. Maecenas pharetra elit quis auctor egestas. In hac habitasse platea dictumst. Nunc congue blandit felis nec semper. Curabitur non vehicula augue.\n'
+      // #### Your Story
+      // Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec placerat blandit tristique. Nullam eu dui urna. Morbi dictum tempor lectus, in bibendum est aliquam vel. Phasellus dolor dolor, commodo quis tincidunt facilisis, blandit blandit elit. Nam iaculis velit dui, in lobortis augue semper volutpat. Maecenas pharetra elit quis auctor egestas. In hac habitasse platea dictumst. Nunc congue blandit felis nec semper. Curabitur non vehicula augue.
+      // '
+      return git.commitAndRelease(bld.repo, bld.branch, bld.version, releaseNotes)
+        .then(() => {
+          return mgr.commit(bld)
+        })
         .then(() => {
           actions.committed()
         })
@@ -81,5 +88,6 @@ function commit (build, actions) {
 module.exports = {
   detectVersion: detectVersion,
   deploy: deploy,
-  monitor: monitor
+  monitor: monitor,
+  commit: commit
 }

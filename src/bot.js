@@ -210,19 +210,19 @@ controller.hears(['commit'], 'direct_message,direct_mention,mention', function (
       convo.on('end', function (convo) {
         if (convo.status === 'completed') {
           bot.reply(message, 'OK! I am committing the deploy now...')
-          ctrl.monitor(bld, {
+          ctrl.commit(bld, {
             committed: () => {
               bot.reply(message, `Excellent! Your deploy has been *COMMITTED*!
-                * The branch was merged to master and tagged
-                * Your stories have been marked released
-                * Artifacts have been saved
+- The branch was merged to master and tagged
+- Your stories have been marked released
+- Artifacts have been saved
               `)
             },
             finish: () => {
               bot.reply(message, 'YAY! Your deploy has *FINISHED* successfully... Test it out and then commit...  `Number 5 is ALIVE!`')
             },
-            fail: () => {
-              bot.reply(message, 'OH NO! You deploy *FAILED*!! Go to check it out!!  `No Disassemble, No Disassemble!`')
+            failed: () => {
+              bot.reply(message, 'OH NO! Your commit *FAILED*!! Go to check it out!!  `No Disassemble, No Disassemble!`')
             }
           })
         } else {

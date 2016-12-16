@@ -8,8 +8,9 @@ var _ = require('lodash'),
     finishable: ['started'],
     committable: ['finished'],
     cancelable: ['started', 'requested'],
-    failable: ['started', 'finished'],
-    committed: ['committed']
+    failable: ['started', 'finished', 'committed'],
+    committed: ['committed'],
+    finished: ['finished']
   }
 
 function getDeployedVersion (build) {
@@ -24,6 +25,7 @@ function getDeployedVersion (build) {
 }
 
 function getFinished (build) {
+  console.log('build', build)
   return State.getBranchesInStates(build.repo, stateMap.finished)
     .then(data => {
       if (data && data.items && data.items.length > 0) {
