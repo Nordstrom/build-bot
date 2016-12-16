@@ -10,7 +10,7 @@ module.exports = Object.freeze({
     repoTable : {
         region: 'us-west-2',
         name: 'build-bot-state',
-        repoName: 'myrepo'
+        repoName: 'hello-johnny5'
     },
 
     /*
