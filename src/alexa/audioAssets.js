@@ -9,10 +9,6 @@ var waitingAudio = {
 };
 
 var audioData = [
-    waitingAudio,
-    waitingAudio,
-    waitingAudio,
-    waitingAudio,
     waitingAudio
 ];
 

@@ -109,10 +109,14 @@ function handleDynamoResponse(err, resp){
         console.log('first item is ');
         console.log(JSON.stringify(firstItem));
         if (firstItem.state === 'committed') {
-            playBehavior = 'REPLACE_ENQUEUED';
+            console.log('fist item has state committed');
+            console.log(firstItem);
+            console.log('replacing queue with complete');
+            playBehavior = 'ENQUEUE';
             songStreamUrl = buildCompleteUrl;
             enqueuedToken = 1000;
             this.attributes['enqueuedToken'] = String(enqueuedToken);
+            this.attributes['index'] = 1;
         } else {
             playBehavior = 'ENQUEUE';
             enqueueIndex +=1;
