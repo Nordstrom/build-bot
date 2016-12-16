@@ -26,8 +26,8 @@ Bot that can Build, Deploy, and Whistle
 23. bot updates jira fixed version on stories
 24. bot attempts Mgr.commitDeploy
 
+BLAHH
 
-HA
 # Deploy / Rollback Flow
 1. @johnny5 deploy xyz minor
 2. bot asks for confirmation
