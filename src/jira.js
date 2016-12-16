@@ -5,15 +5,7 @@ var _ = require('lodash'),
     request = require('request-promise'),
     JIRA_HOST = 'https://build-bot-demo.atlassian.net/rest/',
     JIRA_URL = JIRA_HOST + 'api/2/',
-    JIRA_DEV_STATUS_URL = JIRA_HOST + 'dev-status/latest/issue/detail?issueId={issueId}&applicationType={repoType}&dataType={dataType}',
-    GIT_JIRA_MAP = {
-        'andyday': 'andy.day@nordstrom.com',
-        'steinbergkh': 'katie.h.steinberg@nordstrom.com',
-        'JorjikS': 'jane.savina@nordstrom.com',
-        'yunwang240': 'yun.wang@nordstrom.com',
-        'jasonolmstead33': 'jason.olmstead@nordstrom.com',
-        'rathoretribhuvan': 'tribhuvan.rathore@nordstrom.com'
-    };
+    JIRA_DEV_STATUS_URL = JIRA_HOST + 'dev-status/latest/issue/detail?issueId={issueId}&applicationType={repoType}&dataType={dataType}';
 
 function release(branch, releaseName, buildUserData, options) {
     var releaseOptions = {
@@ -30,21 +22,26 @@ function release(branch, releaseName, buildUserData, options) {
     function authenticateAndInitializeOptions(options) {
         // console.log('authentication...');
         // TODO: OAuth for JIRA.
+        const u = process.env.jirauser
+        const p = process.env.jirapwd
+
+        const a = new Buffer(`${u}:${p}`).toString('base64')
         return Promise.resolve({
             headers: {
-                'Content-Type': 'application/json',
-                Cookie: 'atlassian.xsrf.token=B6JY-L235-ELCS-GFF8|99beade9572baac72c7ca825390e59bc714d8393|lin; studio.crowd.tokenkey=bot8hWjfLVE8UaM1FOLpOA00'
+                'Authorization': `Basic ${a}`
             },
             json: true
         });
     }
 
     function findUser(buildUserData) {
-        var userEmail = GIT_JIRA_MAP[buildUserData];
+        var userEmail = buildUserData;
         // console.log('looking for user [' + buildUserData + '/' + userEmail + ']');
+        console.log(JIRA_URL + 'user/search?username=' + userEmail, jiraApiOptions)
         return request.get(JIRA_URL + 'user/search?username=' + userEmail, jiraApiOptions)
             .then(function (userRecords) {
                 // console.log('results from search user:', userRecords);
+                console.log('userRecords', userRecords)
                 if (!userRecords || userRecords.length !== 1) {
                     throw new Error('Can\'t find user ' + buildUserData + '/' + userEmail);
                 }
@@ -57,9 +54,10 @@ function release(branch, releaseName, buildUserData, options) {
     }
 
     function findStories(jiraUser) {
-        // console.log('quering JIRA for stories for user.id=', jiraUser.key);
+        console.log('quering JIRA for stories for user', jiraUser);
         return request.get(JIRA_URL + 'search?jql=assignee=' + jiraUser.key, jiraApiOptions)
             .then(function (results) {
+                console.log('query results', results)
                 return _.map(results.issues, function (item) {
                     return {
                         id: item.id,
@@ -83,7 +81,7 @@ function release(branch, releaseName, buildUserData, options) {
     }
 
     function filterStoriesByStatus(jiraQueryResults) {
-        // console.log('filtering results by status...', jiraQueryResults);
+        console.log('filtering results by status...', jiraQueryResults);
 
         return request.get(JIRA_URL + 'issue/' + jiraQueryResults[0].id + '/transitions?expand=transitions.fields', jiraApiOptions)
             .then(function (data) {
@@ -130,7 +128,7 @@ function release(branch, releaseName, buildUserData, options) {
             headers: jiraApiOptions.headers,
             json: true,
             body: {
-                description: "An excellent version",
+                description: "Auto Release of " + releaseName,
                 name: releaseName,
                 archived: false,
                 released: false,
@@ -191,8 +189,7 @@ function release(branch, releaseName, buildUserData, options) {
                 fields: {
                     fixVersions: [{
                         id: releaseData.id
-                    }],
-                    description: (story.description || '') + '\nReleased at ' + releaseData.name
+                    }]
                 }
             },
         }, jiraApiOptions);

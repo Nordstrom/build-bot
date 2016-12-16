@@ -210,6 +210,7 @@ controller.hears(['commit'], 'direct_message,direct_mention,mention', function (
       convo.on('end', function (convo) {
         if (convo.status === 'completed') {
           bot.reply(message, 'OK! I am committing the deploy now...')
+          bld.email = user.email
           ctrl.commit(bld, {
             committed: () => {
               bot.reply(message, `Excellent! Your deploy has been *COMMITTED*!
@@ -265,6 +266,24 @@ controller.hears(['call me (.*)', 'my name is (.*)'], 'direct_message,direct_men
     user.name = name
     controller.storage.users.save(user, function (err, id) {
       bot.reply(message, 'Got it. I will call you ' + user.name + ' from now on.')
+    })
+  })
+})
+
+controller.hears(['my email is (.*)'], 'direct_message,direct_mention,mention', function (bot, message) {
+  var email = message.match[1]
+  email = email.match(/\<mailto\:([a-zA-Z0-9\@\-_\.]+)\|/)[1]
+  controller.storage.users.get(message.user, function (err, user) {
+    if (!user) {
+      user = {
+        id: message.user
+      }
+    }
+    console.log('email', email)
+    user.email = email
+    controller.storage.users.save(user, function (err, id) {
+      console.log('user.email', user.email)
+      bot.reply(message, 'Got it. Your email is ' + user.email + '.')
     })
   })
 })

@@ -108,7 +108,7 @@ function release(repo, version, notes){
         body : {
             "tag_name": version,
             "target_commitish": "master",
-            "name": "Release - "+version,
+            "name": version,
             "body": notes,
             "draft": false,
             "prerelease": false

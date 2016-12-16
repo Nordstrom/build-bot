@@ -1,27 +1,26 @@
 'use strict'
 
-var _ = require('lodash');
+var _ = require('lodash')
 
-function translateNote(item) {
-    var translated = '';
-    if (item.title){
-        translated += '### ' + item.title;
-    }
-    if (item.summary) {
-        translated += '\n' + item.summary + '\n';
-    }
-    return translated;
+function translateNote (item) {
+  var translated = ''
+  if (item.summary) {
+    translated += '### ' + item.summary
+  }
+  if (item.description) {
+    translated += '\n' + item.description + '\n'
+  }
+  return translated
 }
 
-module.exports = function(notes) {
+module.exports = function (notes) {
+  var formatted = ''
+  if (!_.isArray(notes)) {
+    notes = [notes]
+  }
+  _.forEach(notes, function (item) {
+    formatted += translateNote(item) + '\n'
+  })
 
-    var formatted =[];
-    if (!_.isArray(notes)) {
-        notes = [notes];
-    }
-     _.forEach(notes, function(item){
-       formatted.push(translateNote(item));
-    });
-
-    return formatted;
-};
+  return formatted
+}
