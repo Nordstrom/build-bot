@@ -2,6 +2,7 @@ const semver = require('semver')
 const mgr = require('./mgr.js')
 const git = require('./github.js')
 const drone = require('./drone.js')
+const jira = require('./jira.js')
 
 function detectVersion (build) {
   return mgr.getDeployedVersion(build)
@@ -68,6 +69,9 @@ function commit (build, actions) {
       return git.commitAndRelease(bld.repo, bld.branch, bld.version, releaseNotes)
         .then(() => {
           return mgr.commit(bld)
+        })
+        .then(() => {
+          jira.release(branch, version,)
         })
         .then(() => {
           actions.committed()
