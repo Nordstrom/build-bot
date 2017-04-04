@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "commit": "node index.js"
+    "shell": "node src/bot/index.js"
   },
   "repository": {
     "type": "git",
@@ -23,6 +23,7 @@
     "space": 4
   },
   "devDependencies": {
+    "botkit-shell": "^0.1.5",
     "gulp": "^3.9.1",
     "gulp-gunzip": "0.0.3",
     "gulp-untar": "0.0.5",
