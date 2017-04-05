@@ -1,5 +1,4 @@
 var Botkit = require('botkit')
-var os = require('os')
 var shellbot = require('botkit-shell')
 
 class SlackBot {
@@ -11,10 +10,17 @@ class SlackBot {
     })
   }
 
-  start() {
+  start(abilities) {
     this.bot = this.controller.spawn({
       token: this.token
     }).startRTM()
+
+    if (typeof abilities === 'function') {
+      abilities(this.controller, this.bot)
+    } else {
+      this.bot.botkit.log('Did not add abilities to bot')
+    }
+
   }
 
   static create(){
@@ -30,11 +36,20 @@ class SlackBot {
 class ShellBot {
 
   constructor(){
-    this.controller = shellbot({})
+    this.controller = shellbot({
+
+    })
   }
 
-  start(){
+  start(abilities){
     this.bot = this.controller.spawn({})
+
+    if (typeof abilities === 'function') {
+      abilities(this.controller, this.bot)
+    } else {
+      this.bot.botkit.log('Did not add abilities to bot')
+    }
+
   }
 
 }

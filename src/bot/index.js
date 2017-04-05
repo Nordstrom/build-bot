@@ -10,7 +10,7 @@ try {
     bot = new ShellBot()
   }
 
-  bot.start()
+  bot.start(require('./abilities'))
 
 } catch(err){
   console.error('There was an error creating a bot instance', err)
