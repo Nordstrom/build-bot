@@ -175,7 +175,6 @@ function helloAbility(controller, bot){
         channel: message.channel,
         name: 'robot_face'
       }, function (err, res) {
-        bot.botkit.log('doing something')
         if (err) {
           bot.botkit.log('Failed to add emoji reaction :(', err)
         }
@@ -183,9 +182,6 @@ function helloAbility(controller, bot){
     }
 
       controller.storage.users.get(message.user, function (err, user) {
-        if (err) {
-          console.error('Some error', err)
-        }
         if (user && user.name) {
           bot.reply(message, 'Hello ' + user.name + '!!')
         } else {
