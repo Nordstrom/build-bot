@@ -18,4 +18,4 @@ try {
 
 }
 
-module.exports = { bot }
+module.exports = bot
