@@ -1,8 +1,6 @@
 const Botkit = require('botkit')
 const shellbot = require('botkit-shell')
 
-const botName = 'johnny5'
-
 class SlackBot {
 
   constructor(token) {
@@ -44,7 +42,6 @@ class ShellBot {
 
   start(abilities){
     this.bot = this.controller.spawn({})
-    this.bot.identity.name = botName
     if (typeof abilities === 'function') {
       abilities(this.controller, this.bot)
     } else {
