@@ -24,6 +24,10 @@ clear, \c - clear the terminal screen
 ##>
 ```
 
+# Run in Slack
+
+`BOT_TOKEN=bot-slack-token npm run slack`
+
 
 # Deploy / Commmit Flow
 1. @johnny5 deploy xyz minor
