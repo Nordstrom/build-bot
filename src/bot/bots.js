@@ -1,7 +1,7 @@
 const Botkit = require('botkit')
 const shellbot = require('botkit-shell')
 
-const botName = 'Johnny5'
+const botName = 'johnny5'
 
 class SlackBot {
 
@@ -29,6 +29,7 @@ class SlackBot {
     if (!process.env.token) {
       throw new Error('Error: Specify token in environment')
     }
+
     return new SlackBot(process.env.token);
 
   }
