@@ -1,19 +1,59 @@
-var SlackBot = require('./bots').SlackBot
-var ShellBot = require('./bots').ShellBot
+const Botkit = require('botkit')
+const shellbot = require('botkit-shell')
 
-var bot;
-try {
+const botName = 'johnny5'
 
-  if (process.env.BOT_ADAPTER === 'slack') {
-    bot = SlackBot.create()
-  } else {
-    bot = new ShellBot()
+class SlackBot {
+
+  constructor(token) {
+    this.token = token
+    this.controller = Botkit.slackbot({
+      // debug: true
+    })
   }
 
-  bot.start(require('./abilities'))
+  start(abilities) {
+    this.bot = this.controller.spawn({
+      token: this.token
+    }).startRTM()
 
-} catch(err){
-  console.error('There was an error creating a bot instance', err)
-  process.exit(1)
+    if (typeof abilities === 'function') {
+      abilities(this.controller, this.bot)
+    } else {
+      this.bot.botkit.log('Did not add abilities to bot')
+    }
+
+  }
+
+  static create(){
+    if (!process.env.BOT_TOKEN) {
+      throw new Error('Error: Specify token in environment')
+    }
+
+    return new SlackBot(process.env.BOT_TOKEN);
+
+  }
 
 }
+
+class ShellBot {
+
+  constructor(){
+    this.controller = shellbot({})
+  }
+
+  start(abilities){
+    this.bot = this.controller.spawn({})
+    this.bot.identity.name = botName
+    if (typeof abilities === 'function') {
+      abilities(this.controller, this.bot)
+    } else {
+      this.bot.botkit.log('Did not add abilities to bot')
+    }
+
+  }
+
+}
+
+
+module.exports = { SlackBot, ShellBot }
