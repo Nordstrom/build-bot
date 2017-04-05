@@ -26,11 +26,11 @@ class SlackBot {
   }
 
   static create(){
-    if (!process.env.token) {
+    if (!process.env.BOT_TOKEN) {
       throw new Error('Error: Specify token in environment')
     }
 
-    return new SlackBot(process.env.token);
+    return new SlackBot(process.env.BOT_TOKEN);
 
   }
 
