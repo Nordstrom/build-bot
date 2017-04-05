@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "shell": "node src/bot/index.js"
+    "shell": "BOT_ADAPTER=shell node src/bot/index.js"
   },
   "repository": {
     "type": "git",
