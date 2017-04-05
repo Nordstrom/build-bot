@@ -2,6 +2,29 @@
 Bot that can Build, Deploy, and Whistle
 
 ha
+
+
+# Tests
+
+`npm test`
+
+# Run in local shell (no Slack)
+```
+npm run shell
+...
+##>@johnny5 hi
+Hello.
+##>help
+usage:
+/dm - switch to DM context
+/ch - switch to channel context
+exit, \q - close shell and exit
+help, \? - print this usage
+clear, \c - clear the terminal screen
+##>
+```
+
+
 # Deploy / Commmit Flow
 1. @johnny5 deploy xyz minor
 2. bot asks for confirmation
