@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "shell": "BOT_ADAPTER=shell node src/bot/index.js",
-    "slack": "BOT_ADAPTER=slack node src/bot/index.js"
+    "shell": "BOT_ADAPTER=shell node index.js",
+    "slack": "BOT_ADAPTER=slack node index.js"
   },
   "repository": {
     "type": "git",
