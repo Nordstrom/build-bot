@@ -12,7 +12,7 @@ ha
 ```
 npm run shell
 ...
-##>@johnny5 hi
+##>@shellbot hi
 Hello.
 ##>help
 usage:
