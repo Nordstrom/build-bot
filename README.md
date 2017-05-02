@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Nordstrom/build-bot.svg?branch=dev)](https://travis-ci.org/Nordstrom/build-bot)
+
 # build-bot
 Bot that can Build, Deploy, and Whistle
 
