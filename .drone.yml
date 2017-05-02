@@ -1,7 +1,0 @@
-build:
-  commit:
-    image: node:6
-    commands:
-      - mkdir -p ~/dynamodb_local
-      - npm install --silent
-      - npm test
