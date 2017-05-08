@@ -2,7 +2,7 @@
 
 var convertReleaseNotes = require('../src/util/convertReleaseNotes.js');
 
-describe('Test release notes converter', function(){
+describe.skip('Test release notes converter', function(){
     it('multi release notes', function(){
         var notes = convertReleaseNotes([
             {

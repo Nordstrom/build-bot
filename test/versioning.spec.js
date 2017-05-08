@@ -27,7 +27,7 @@ var _ = require('lodash'),
 
 var versioning;
 
-describe('Test Versioning', function () {
+describe.skip('Test Versioning', function () {
     describe("Testing Versioning.update(type), success", function(){
         before(function () {
             mockery.registerMock("shelljs", shellMock);

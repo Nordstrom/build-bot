@@ -33,7 +33,7 @@ var shellMockError = {
     }
 };
 
-describe('Test Github', function () {
+describe.skip('Test Github', function () {
     describe("Testing Github.push(branch, message), success", function(){
         before(function () {
             mockery.registerMock("shelljs", shellMock);
