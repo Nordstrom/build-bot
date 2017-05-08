@@ -1,16 +1,15 @@
-var SlackBot = require('./src/bot').SlackBot
-var ShellBot = require('./src/bot').ShellBot
+var BuildBot = require('./src/bot')
 
 var bot;
 try {
 
   if (process.env.BOT_ADAPTER === 'slack') {
-    bot = SlackBot.create()
+    bot = BuildBot.startSlack()
   } else {
-    bot = new ShellBot()
+    bot = BuildBot.startShell()
   }
 
-  bot.start( require('./src/bot/abilities') )
+  bot.init( require('./src/bot/abilities') )
 
 } catch(err){
   console.error('There was an error creating a bot instance', err)

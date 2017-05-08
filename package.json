@@ -4,7 +4,7 @@
   "description": "Bot that can Build, Deploy, and Whistle",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha",
+    "test": "./node_modules/mocha/bin/mocha -r test/common.js",
     "shell": "BOT_ADAPTER=shell node index.js",
     "slack": "BOT_ADAPTER=slack node index.js"
   },
@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "botkit-shell": "^0.1.5",
+    "chai": "^3.5.0",
     "gulp": "^3.9.1",
     "gulp-gunzip": "0.0.3",
     "gulp-untar": "0.0.5",

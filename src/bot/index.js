@@ -2,20 +2,18 @@ const Botkit = require('botkit')
 const shellbot = require('botkit-shell')
 const Promise = require('bluebird')
 
-class SlackBot {
+class BuildBot {
 
-  constructor(token) {
-    this.token = token
-    this.controller = Botkit.slackbot({
-      // debug: true
-    })
+  constructor(botFactory, options) {
+    this.options = options
+    this.controller = botFactory({});
   }
 
-  start(abilities) {
-    this.bot = this.controller.spawn({
-      token: this.token
-    }).startRTM()
+  start(spawnFunc){
+    this.bot = spawnFunc.call(this, spawnFunc);
+  }
 
+  init(abilities) {
     promisify(this.controller, this.bot)
 
     if (typeof abilities === 'function') {
@@ -26,38 +24,28 @@ class SlackBot {
 
   }
 
-  static create(){
+  static startSlack(){
     if (!process.env.BOT_TOKEN) {
       throw new Error('Error: Specify token in environment')
     }
 
-    return new SlackBot(process.env.BOT_TOKEN);
+    var bot = new BuildBot(Botkit.slackbot, { token: process.env.BOT_TOKEN })
+    bot.start(function spawnSlack(){
+      return this.controller.spawn(this.options).startRTM()
+    })
+    return bot
 
+  }
+
+  static startShell(){
+    var bot = new BuildBot(shellbot, {})
+    bot.start(function spawnShell(){
+      return this.controller.spawn(this.options)
+    })
+    return bot
   }
 
 }
-
-class ShellBot {
-
-  constructor(){
-    this.controller = shellbot({})
-  }
-
-  start(abilities){
-    this.bot = this.controller.spawn({})
-
-    promisify(this.controller, this.bot)
-
-    if (typeof abilities === 'function') {
-      abilities(this.controller, this.bot)
-    } else {
-      this.bot.botkit.log('Did not add abilities to bot')
-    }
-
-  }
-
-}
-
 
 function promisify(controller, bot){
 
@@ -87,4 +75,4 @@ function promisify(controller, bot){
 
 }
 
-module.exports = { SlackBot, ShellBot }
+module.exports = BuildBot
