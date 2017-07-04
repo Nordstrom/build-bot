@@ -24,6 +24,9 @@
     "semicolon": false,
     "space": 4
   },
+  "standard": {
+    "globals": ["it", "describe", "expect"]
+  },
   "devDependencies": {
     "botkit-shell": "^0.1.5",
     "chai": "^3.5.0",
