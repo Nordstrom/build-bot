@@ -25,7 +25,7 @@
     "space": 4
   },
   "standard": {
-    "globals": ["it", "describe", "expect"]
+    "globals": ["it", "describe", "expect", "before"]
   },
   "devDependencies": {
     "botkit-shell": "^0.1.5",
