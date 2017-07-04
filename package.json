@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha -r test/common.js",
+    "tdd": "./node_modules/mocha/bin/mocha -r test/common.js -w",
     "shell": "BOT_ADAPTER=shell node index.js",
     "slack": "BOT_ADAPTER=slack node index.js"
   },
