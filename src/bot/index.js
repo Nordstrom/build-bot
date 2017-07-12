@@ -57,7 +57,7 @@ function promisify(controller, bot){
         return function promisified(keywords, events, middleware){
           return new Promise(function(resolve, reject){
               function callback(bot, message){
-                resolve(message);
+                resolve({ bot, message });
               }
               if (middleware){
                 originalMethod(keywords, events, middleware, callback)
