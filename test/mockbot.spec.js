@@ -18,7 +18,7 @@ describe('mock bot', () => {
 	})
 
 	it('should get a reply', () => {
-		mock.write('hi')
+		mock.write(callText)
 		return mock.getOutput().then(reply => {
 			expect(reply).to.equal(replyText)
 		})
