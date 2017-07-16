@@ -45,7 +45,6 @@
     "should": "^11.1.2",
     "snazzy": "^5.0.0",
     "standard": "^8.6.0",
-    "stream-buffers": "^3.0.1",
     "vinyl-s3": "^0.3.1",
     "vinyl-source-stream": "^1.1.0"
   },

@@ -1,142 +1,121 @@
 var Botkit = require('botkit').core
 var readline = require('readline')
-var streamBuffers = require('stream-buffers')
-var Duplex = require('stream').Duplex;
+var {PassThrough} = require('stream')
+var Promise = require('bluebird')
 
 function MockBot(configuration, inStream, outStream) {
 
-    // Create a core botkit bot
-    var mockBot = Botkit(configuration || {});
 
-    mockBot.middleware.spawn.use(function(bot, next) {
-        mockBot.listenStdIn(bot);
-        next();
 
-    });
+        // Create a core botkit bot
+        var mockBot = Botkit(configuration || {});
 
-    mockBot.defineBot(function(botkit, config) {
+        mockBot.middleware.spawn.use(function(bot, next) {
 
-        var bot = {
-            botkit: botkit,
-            config: config || {},
-            utterances: botkit.utterances,
-        };
+            mockBot.startTicking()
+            mockBot.rl = readline.createInterface({ input: inStream, output: outStream, terminal: false });
+            mockBot.rl.on('line', function(line) {
+                var message = {
+                    text: line,
+                    user: 'user',
+                    channel: 'text',
+                    timestamp: Date.now()
+                };
 
-        bot.createConversation = function(message, cb) {
-            botkit.createConversation(this, message, cb);
-        };
+                mockBot.receiveMessage(bot, message);   
+            });
+            next();
 
-        bot.startConversation = function(message, cb) {
-            botkit.startConversation(this, message, cb);
-        };
+        });
 
-        bot.send = function(message, cb) {
-            console.log('BOT:', message.text);
-            if (cb) {
-                cb();
-            }
-        };
+        mockBot.defineBot(function(botkit, config) {
 
-        bot.reply = function(src, resp, cb) {
-            bot.botkit.log('replying')
-            var msg = {};
+            var bot = {
+                botkit: botkit,
+                config: config || {},
+                utterances: botkit.utterances,
+            };
 
-            if (typeof(resp) == 'string') {
-                msg.text = resp;
-            } else {
-                msg = resp;
-            }
+            bot.createConversation = function(message, cb) {
+                botkit.createConversation(this, message, cb);
+            };
 
-            botkit.log(src)
+            bot.startConversation = function(message, cb) {
+                botkit.startConversation(this, message, cb);
+            };
 
-            msg.channel = src.channel;
+            bot.send = function(message, cb) {
+                outStream.write(message.text)
+                if (cb) {
+                    cb();
+                }
+            };
 
-            bot.say(msg, cb);
-        };
+            bot.reply = function(src, resp, cb) {
+                var msg = {};
 
-        bot.findConversation = function(message, cb) {
-            botkit.debug('CUSTOM FIND CONVO', message.user, message.channel);
-            for (var t = 0; t < botkit.tasks.length; t++) {
-                for (var c = 0; c < botkit.tasks[t].convos.length; c++) {
-                    if (
-                        botkit.tasks[t].convos[c].isActive() &&
-                        botkit.tasks[t].convos[c].source_message.user == message.user
-                    ) {
-                        botkit.debug('FOUND EXISTING CONVO!');
-                        cb(botkit.tasks[t].convos[c]);
-                        return;
+                if (typeof(resp) == 'string') {
+                    msg.text = resp;
+                } else {
+                    msg = resp;
+                }
+
+                msg.channel = src.channel;
+
+                bot.say(msg, cb);
+            };
+
+            bot.findConversation = function(message, cb) {
+                botkit.debug('CUSTOM FIND CONVO', message.user, message.channel);
+                for (var t = 0; t < botkit.tasks.length; t++) {
+                    for (var c = 0; c < botkit.tasks[t].convos.length; c++) {
+                        if (
+                            botkit.tasks[t].convos[c].isActive() &&
+                            botkit.tasks[t].convos[c].source_message.user == message.user
+                        ) {
+                            botkit.debug('FOUND EXISTING CONVO!');
+                            cb(botkit.tasks[t].convos[c]);
+                            return;
+                        }
                     }
                 }
-            }
 
-            cb();
-        };
-
-        return bot;
-
-    });
-
-    mockBot.listenStdIn = function(bot) {
-
-        mockBot.startTicking();
-        var rl = readline.createInterface({ input: inStream, output: outStream, terminal: false });
-        rl.on('line', function(line) {
-            var message = {
-                text: line,
-                user: 'user',
-                channel: 'text',
-                timestamp: Date.now()
+                cb();
             };
-            mockBot.receiveMessage(bot, message);
-        });
-    };
 
-    return mockBot;
+            return bot;
+
+        });
+
+        return mockBot
+    
 };
 
-class MyDuplex extends Duplex {
-  constructor(options, writableStream, readableStream) {
-    super(options);
-    this.writableStream = writableStream
-    this.readableStream = readableStream
-  }
+class BotKitMock {
 
-  _write(chunk, encoding, callback) {
-    this.writableStream._write(chunk, encoding, callback)
-  }
-
-  _read(size) {
-    this.readableStream._read(size)
-  }
-}
-
-var convoIn = new streamBuffers.ReadableStreamBuffer()
-var convoOut = new streamBuffers.WritableStreamBuffer()
-
-var controller = MockBot({identity: { id: 'mockbot', name: 'MockBot' }}, convoIn, outStream);
-var bot = controller.spawn();
-
-controller.hears(['hello', 'hi'], 'message_received', function(bot, message) {
-    bot.reply(message, 'Hey there buddy');
-
-});
-
-convoOut.on('finish', function(data){
-     var chunk;
-    while((chunk = readableStream.read()) !== null) {
-        console.dir(chunk)
+    constructor(){
+        this.input = new PassThrough()
+        this.output = new PassThrough()
+        this.controller = MockBot({identity: { id: 'mockbot', name: 'MockBot' }}, this.input, this.output)
+        this.bot = this.controller.spawn();
     }
 
-})
+    write(str){
+        this.input.write(str + '\n')
+    }
 
-console.log('writing')
-convoIn.put('hi\n')
+    getOutput() {
+        return new Promise((resolve, reject) => {
+            this.output.on('data', chunk => {
+                resolve(chunk.toString())
+            })
+        })
+    }
 
+    shutdown() {
+        this.bot.botkit.shutdown()
+    }
 
+}
 
-
-
-
-
-
-
+module.exports = BotKitMock
