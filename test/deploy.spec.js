@@ -1,4 +1,4 @@
-describe('Deploy', () => {
+describe.skip('Deploy', () => {
 
     const deploy = require(SRC_HOME + '/deploy')
     let convo;
