@@ -1,5 +1,5 @@
 
-global.PROJECT_HOME = __dirname + '..';
+global.PROJECT_HOME = __dirname + '/..';
 global.SRC_HOME = PROJECT_HOME + '/src';
 
 // global promise library
