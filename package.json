@@ -29,7 +29,8 @@
       "it",
       "describe",
       "expect",
-      "before"
+      "before",
+      "nock"
     ]
   },
   "devDependencies": {
@@ -41,6 +42,7 @@
     "gulp-util": "^3.0.7",
     "mocha": "^3.2.0",
     "mockery": "^2.0.0",
+    "nock": "^9.0.14",
     "request-progress": "^3.0.0",
     "should": "^11.1.2",
     "snazzy": "^5.0.0",
