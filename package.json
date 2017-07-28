@@ -36,6 +36,7 @@
   "devDependencies": {
     "botkit-shell": "^0.1.5",
     "chai": "^3.5.0",
+    "chai-as-promised": "^7.1.1",
     "gulp": "^3.9.1",
     "gulp-gunzip": "0.0.3",
     "gulp-untar": "0.0.5",
@@ -53,6 +54,7 @@
   "dependencies": {
     "alexa-sdk": "^1.0.6",
     "aws-sdk": "^2.7.14",
+    "bitbucket-server-nodejs": "^2.11.4",
     "botkit": "^0.4.3",
     "child_process": "^1.0.2",
     "glob": "^7.1.1",
