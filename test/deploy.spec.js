@@ -44,13 +44,9 @@ describe('Deploy', () => {
             })
 
             describe('WHEN checking if repo exists', () => {            
-                let exists
-                before(() => {
-                    exists = deployer.exists.bind(deployer, repoName)
-                })
-
+            
                 it('THEN should check bitbucket server for repo existence', () => {
-                    return expect(exists()).to.be.fulfilled
+                    return expect( deployer.exists(repoName) ).to.be.fulfilled
                 })    
 
             })
@@ -70,14 +66,9 @@ describe('Deploy', () => {
             })
 
             describe('WHEN checking if repo exists', () => {
-                let exists
-
-                before(() => {
-                    exists = deployer.exists.bind(deployer, repoName)
-                })
 
                 it('THEN should reject', () => {
-                    return expect(exists()).to.be.rejected
+                    return expect( deployer.exists(repoName) ).to.be.rejected
                 })
             })
 
