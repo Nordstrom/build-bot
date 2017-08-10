@@ -54,7 +54,7 @@
   "dependencies": {
     "alexa-sdk": "^1.0.6",
     "aws-sdk": "^2.7.14",
-    "bitbucket-server-nodejs": "^2.11.4",
+    "bitbucket-server-nodejs": "git+https://github.com/sternba/bitbucket-server-nodejs.git#tags-post",
     "botkit": "^0.4.3",
     "child_process": "^1.0.2",
     "glob": "^7.1.1",
