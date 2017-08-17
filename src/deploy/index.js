@@ -1,13 +1,17 @@
 
 class TagDeployment {
 
-	constructor(bitbucket, projectKey) {
+	constructor(bitbucket, deploymentBranch) {
 		this.bitbucket = bitbucket
-		this.projectKey = projectKey
+		this.deploymentBranch = deploymentBranch
 	}
 
-	exists(repoName) {
-		return this.bitbucket.repos.getRepo(this.projectKey, repoName)
+	exists(projectKey, repoName) {
+		return this.bitbucket.repos.getRepo(projectKey, repoName)
+	}
+
+	startDeployment(projectKey, repoName){
+		this.bitbucket.tags.post(projectKey, repoName, null, this.deploymentBranch)
 	}
 
 }
