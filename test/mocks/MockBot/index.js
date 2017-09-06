@@ -5,8 +5,6 @@ var Promise = require('bluebird')
 
 function MockBot(configuration, inStream, outStream) {
 
-
-
         // Create a core botkit bot
         var mockBot = Botkit(configuration || {});
 
@@ -91,6 +89,34 @@ function MockBot(configuration, inStream, outStream) {
     
 };
 
+function promisify(controller, bot){
+
+  Promise.promisifyAll(controller, {
+      filter: function(name) {
+        return name === 'hears';
+      },
+      promisifier: function(originalMethod) {
+        return function promisified(keywords, events, middleware){
+          return new Promise(function(resolve, reject){
+              function callback(bot, message){
+                resolve({ bot, message });
+              }
+              if (middleware){
+                originalMethod(keywords, events, middleware, callback)
+              } else {
+                originalMethod(keywords, events, callback)
+              }
+          });
+        }
+      }
+    })
+
+    Promise.promisifyAll(controller)
+    Promise.promisifyAll(bot)
+
+
+}
+
 class BotKitMock {
 
     constructor(){
@@ -98,6 +124,7 @@ class BotKitMock {
         this.output = new PassThrough()
         this.controller = MockBot({identity: { id: 'mockbot', name: 'MockBot' }}, this.input, this.output)
         this.bot = this.controller.spawn();
+        promisify(this.controller, this.bot)
     }
 
     write(str){
