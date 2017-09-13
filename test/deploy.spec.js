@@ -1,5 +1,6 @@
 describe('Deploy', () => {
-  const {Deployer} = require(SRC_HOME + '/deploy')
+  const BotKitMock = require('./mocks/MockBot')
+  const {Deployer, Conversation} = require(SRC_HOME + '/deploy')
   const {Client} = require('bitbucket-server-nodejs')
 
   const bitbucketBaseUrl = 'http://bitbuckethost:1234'
@@ -16,9 +17,6 @@ describe('Deploy', () => {
     bitbucketClient = new Client(bitbucketBaseApiUrl)
     deployer = new Deployer(bitbucketClient, deploymentBranch)
   })
-  after(() => {
-    expect(nock.isDone()).to.be.true
-  })
 
   describe('GIVEN repo name is undefined', () => {
     it('WHEN checking if repo exists THEN should reject', () => {
@@ -30,12 +28,12 @@ describe('Deploy', () => {
     describe('AND repo exists', () => {
       let scope
 
-      before(() => {
+      beforeEach(() => {
         scope = nock(bitbucketBaseApiUrl)
                     .get(bitbucketRepoPath)
                     .reply(200)
       })
-      after(() => {
+      afterEach(() => {
         expect(scope.isDone()).to.be.true
       })
 
@@ -83,4 +81,35 @@ describe('Deploy', () => {
       })
     })
   })
+
+  describe('GIVEN controller is listening for deploy direct messages', () => {
+    let mock
+    let conversation
+
+    before(() => {
+      mock = new BotKitMock()
+      conversation = new Conversation(mock.controller)
+      conversation.init()
+      
+    })
+    after(() => {
+      mock.shutdown()
+    })
+
+    describe('WHEN direct message contains only text: deploy', () => {
+      
+      before(() => {
+        mock.write('deploy')
+      })
+
+      it('THEN should respond with message saying it doesn`t know what to deploy', () => {
+        return mock.getOutput().then(reply => {
+          expect(reply).to.equal("I'm sorry, I don't know how to do deployments yet.")
+        })
+      })
+
+    })
+
+  })
+
 })

@@ -2,8 +2,7 @@ describe('mock bot', () => {
 	const BotKitMock = require('./mocks/MockBot')
 	const replyText = 'Hey there'
 	const callText = 'hi'
-	let mock	
-	let promise
+	let mock
 
 	before(() => {
 		mock = new BotKitMock()
