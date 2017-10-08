@@ -35,7 +35,6 @@
   },
   "devDependencies": {
     "bluebird": "^3.5.1",
-    "botkit-shell": "^0.1.5",
     "chai": "^3.5.0",
     "chai-as-promised": "^7.1.1",
     "gulp": "^3.9.1",
@@ -55,6 +54,7 @@
     "vinyl-source-stream": "^1.1.0"
   },
   "dependencies": {
+    "botkit-shell": "^0.1.5",
     "alexa-sdk": "^1.0.6",
     "aws-sdk": "^2.7.14",
     "bitbucket-server-nodejs": "git+https://github.com/sternba/bitbucket-server-nodejs.git#tags-post",
