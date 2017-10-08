@@ -99,7 +99,7 @@ describe('Deploy', () => {
     describe('WHEN direct message contains only text: deploy', () => {
       
       before(() => {
-        mock.write('deploy')
+        mock.write('@mockbot deploy')
       })
 
       it('THEN should respond with message saying it doesn`t know what to deploy', () => {
@@ -110,7 +110,7 @@ describe('Deploy', () => {
 
       describe('AND another direct message contains only text: deploy', () => {
 
-        before( () => mock.write('deploy') )
+        before( () => mock.write('@mockbot deploy') )
 
         it('THEN should respond with message saying it doesn`t know what to deploy', () => {
           return mock.getOutput().then(reply => {

@@ -26,6 +26,21 @@ function MockBot(configuration, inStream, outStream) {
 
         });
 
+        mockBot.on('message_received', (bot, msg) => {
+            let evt
+            if (msg.channel === 'DM') {
+              evt = 'direct_message'
+            } else {
+              if (RegExp(`^@${mockBot.config.identity.name}`, 'i').test(msg.text)) {
+                msg.text = msg.text.replace(RegExp(`^@${mockBot.config.identity.name}:?\\s*`, 'i'), '')
+                evt = 'direct_mention'
+              } else if (RegExp(`@${mockBot.config.identity.name}`, 'i').test(msg.text)) {
+                evt = 'mention'
+              } else evt = 'ambient'
+            }
+            mockBot.trigger(evt, [bot, msg])
+          });
+
         mockBot.defineBot(function(botkit, config) {
 
             var bot = {
@@ -96,15 +111,22 @@ class BotKitMock {
         this.output = new PassThrough()
         this.controller = MockBot({identity: { id: 'mockbot', name: 'MockBot' }}, this.input, this.output)
         this.bot = this.controller.spawn();
-
-        this.outputPromise = Promise.resolve('')
+        
+        this.clearOutput()
 
         this.output.on('data', chunk => {
-            this.outputPromise = Promise.resolve(chunk.toString())
+            this.outputResolver.bind(this.outputPromise, chunk.toString())();
+        })
+    }
+
+    clearOutput(){
+        this.outputPromise = new Promise((resolve, reject) => {
+            this.outputResolver = resolve
         })
     }
 
     write(str){
+        this.clearOutput()
         this.input.write(str + '\n')
     }
 
