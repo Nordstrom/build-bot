@@ -34,6 +34,7 @@
     ]
   },
   "devDependencies": {
+    "bluebird": "^3.5.1",
     "botkit-shell": "^0.1.5",
     "chai": "^3.5.0",
     "chai-as-promised": "^7.1.1",

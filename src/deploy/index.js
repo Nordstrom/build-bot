@@ -22,17 +22,14 @@ class Conversation {
 
 	constructor(controller) {
 		this.controller = controller
-		this.controller.log('constructing deploy conversation')
 	}
 
 	reply(bot, message) {
-		this.controller.log('replying...')
-	    bot.bot.reply(bot.message, "I'm sorry, I don't know how to do deployments yet.")
+	    bot.reply(message, "I'm sorry, I don't know how to do deployments yet.")
 	}
 
 	init() {
-		this.controller.log('deploy conversation init')
-		this.controller.hearsAsync(['deploy'], 'message_received,direct_message,direct_mention,mention').then((bot, message) => {
+		this.controller.hears(['deploy'], 'direct_message,direct_mention,mention', (bot, message) => {
 			this.reply(bot, message)
 		})
 	}

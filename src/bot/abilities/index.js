@@ -8,16 +8,9 @@ function abilities(controller, bot) {
   identityAbility(controller, bot)
   shutdownAbility(controller, bot)
 
-  /*const deployConversation = new DeployConversation(controller)
-  deployConversation.init()*/
-  deployAbility(controller, bot)
+  const deployConversation = new DeployConversation(controller)
+  deployConversation.init()
 
-}
-
-function deployAbility(controller, bot) {
-    controller.hearsAsync(['deploy'], 'direct_message,direct_mention,mention').then((bot, message) => {
-      bot.bot.reply(bot.message, "I'm sorry, I don't know how to do deployments yet.")
-    })
 }
 
 function addReaction(bot, message){

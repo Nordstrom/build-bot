@@ -89,34 +89,6 @@ function MockBot(configuration, inStream, outStream) {
     
 };
 
-function promisify(controller, bot){
-
-  Promise.promisifyAll(controller, {
-      filter: function(name) {
-        return name === 'hears';
-      },
-      promisifier: function(originalMethod) {
-        return function promisified(keywords, events, middleware){
-          return new Promise(function(resolve, reject){
-              function callback(bot, message){
-                resolve({ bot, message });
-              }
-              if (middleware){
-                originalMethod(keywords, events, middleware, callback)
-              } else {
-                originalMethod(keywords, events, callback)
-              }
-          });
-        }
-      }
-    })
-
-    Promise.promisifyAll(controller)
-    Promise.promisifyAll(bot)
-
-
-}
-
 class BotKitMock {
 
     constructor(){
@@ -124,7 +96,12 @@ class BotKitMock {
         this.output = new PassThrough()
         this.controller = MockBot({identity: { id: 'mockbot', name: 'MockBot' }}, this.input, this.output)
         this.bot = this.controller.spawn();
-        promisify(this.controller, this.bot)
+
+        this.outputPromise = Promise.resolve('')
+
+        this.output.on('data', chunk => {
+            this.outputPromise = Promise.resolve(chunk.toString())
+        })
     }
 
     write(str){
@@ -132,11 +109,7 @@ class BotKitMock {
     }
 
     getOutput() {
-        return new Promise((resolve, reject) => {
-            this.output.on('data', chunk => {
-                resolve(chunk.toString())
-            })
-        })
+        return this.outputPromise
     }
 
     shutdown() {

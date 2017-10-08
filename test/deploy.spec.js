@@ -108,6 +108,18 @@ describe('Deploy', () => {
         })
       })
 
+      describe('AND another direct message contains only text: deploy', () => {
+
+        before( () => mock.write('deploy') )
+
+        it('THEN should respond with message saying it doesn`t know what to deploy', () => {
+          return mock.getOutput().then(reply => {
+            expect(reply).to.equal("I'm sorry, I don't know how to do deployments yet.")
+          })
+        })
+
+      })
+
     })
 
   })
