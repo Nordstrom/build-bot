@@ -42,7 +42,6 @@
   "dependencies": {
     "alexa-sdk": "^1.0.6",
     "aws-sdk": "^2.7.14",
-    "bluebird": "^3.5.0",
     "botkit": "^0.4.3",
     "child_process": "^1.0.2",
     "glob": "^7.1.1",
