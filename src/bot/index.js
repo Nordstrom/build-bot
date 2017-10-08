@@ -1,6 +1,5 @@
 const Botkit = require('botkit')
 const shellbot = require('botkit-shell')
-const Promise = require('bluebird')
 
 class BuildBot {
 
@@ -14,7 +13,6 @@ class BuildBot {
   }
 
   init(abilities) {
-    promisify(this.controller, this.bot)
 
     if (typeof abilities === 'function') {
       abilities(this.controller, this.bot)
@@ -44,34 +42,6 @@ class BuildBot {
     })
     return bot
   }
-
-}
-
-function promisify(controller, bot){
-
-  Promise.promisifyAll(controller, {
-      filter: function(name) {
-        return name === 'hears';
-      },
-      promisifier: function(originalMethod) {
-        return function promisified(keywords, events, middleware){
-          return new Promise(function(resolve, reject){
-              function callback(bot, message){
-                resolve(message);
-              }
-              if (middleware){
-                originalMethod(keywords, events, middleware, callback)
-              } else {
-                originalMethod(keywords, events, callback)
-              }
-          });
-        }
-      }
-    })
-
-    Promise.promisifyAll(controller)
-    Promise.promisifyAll(bot)
-
 
 }
 

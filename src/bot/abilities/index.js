@@ -24,10 +24,9 @@ function addReaction(bot, message){
 }
 
 function helloAbility(controller, bot){
-  controller.hearsAsync(['hello', 'hi'], 'direct_message,direct_mention,mention').then(function(message) {
+  controller.hears(['hello', 'hi'], 'direct_message,direct_mention,mention', function(bot, message) {
     replyHello(bot, message);
-      
-  });
+  })
 }
 
 function replyHello(bot, message){
@@ -58,10 +57,8 @@ function abortShutdown(response, convo){
 }
 
 function shutdownAbility(controller, bot){
-  controller.hearsAsync(['shutdown'], 'direct_message,direct_mention,mention').then(function (message) {
-    return bot.startConversationAsync(message)
-
-  }).then(function(convo) { 
+  controller.hears(['shutdown'], 'direct_message,direct_mention,mention', function (bot, message) {
+    bot.startConversation(message, function(err, convo) { 
       convo.ask('Are you sure you want me to shutdown?', [
         {
           pattern: bot.utterances.yes,
@@ -73,12 +70,14 @@ function shutdownAbility(controller, bot){
           callback: abortShutdown
         }
       ]);
-  });
+    })
+
+  })
 }
 
 function identityAbility(controller, bot){
-  controller.hearsAsync(['uptime', 'identify yourself', 'who are you', 'what is your name'],
-      'direct_message,direct_mention,mention').then(function(message) {
+  controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your name'],
+      'direct_message,direct_mention,mention', function(bot, message) {
       var hostname = os.hostname()
       var uptime = formatUptime(process.uptime())
 
