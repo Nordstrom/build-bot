@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "commit": "node index.js"
+    "commit": "node index.js",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -52,6 +54,8 @@
     "shelljs": "^0.7.5",
     "slack": "^8.1.2",
     "vogels": "^2.2.0",
-    "vogels-promisified": "^2.2.3"
-  }
+    "vogels-promisified": "^2.2.3",
+    "snyk": "^1.316.1"
+  },
+  "snyk": true
 }
