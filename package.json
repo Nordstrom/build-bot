@@ -40,7 +40,7 @@
     "alexa-sdk": "^1.0.6",
     "aws-sdk": "^2.7.14",
     "bluebird": "^3.4.6",
-    "botkit": "^0.4.3",
+    "botkit": "^4.0.0",
     "child_process": "^1.0.2",
     "glob": "^7.1.1",
     "https-proxy-agent": "^1.0.0",
@@ -50,7 +50,7 @@
     "request-promise": "^4.1.1",
     "semver": "^5.3.0",
     "shelljs": "^0.7.5",
-    "slack": "^8.1.2",
+    "slack": "^9.0.0",
     "vogels": "^2.2.0",
     "vogels-promisified": "^2.2.3"
   }
